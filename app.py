@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import time
 import os
 
-# Page configuration - Use expanded for welcome, we'll handle hiding via CSS
+# Page configuration
 st.set_page_config(
     page_title="Harvest Horizon: The Satellite Steward",
     page_icon="🌾",
@@ -21,7 +21,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# CSS to completely hide sidebar during gameplay
+# CSS - Only hide sidebar during gameplay
 st.markdown("""
     <style>
     /* Mobile responsiveness */
@@ -37,12 +37,12 @@ st.markdown("""
     }
     
     /* COMPLETELY HIDE SIDEBAR DURING GAMEPLAY */
-    .hide-sidebar section[data-testid="stSidebar"] {
+    .gameplay section[data-testid="stSidebar"] {
         display: none !important;
     }
     
     /* Expand main content when sidebar is hidden */
-    .hide-sidebar .main .block-container {
+    .gameplay .main .block-container {
         max-width: 100% !important;
         padding-left: 1rem !important;
         padding-right: 1rem !important;
@@ -300,17 +300,17 @@ if 'game_state' not in st.session_state:
     st.session_state.game = None
     st.session_state.results = None
 
-# Apply CSS class to body based on game state
-if st.session_state.game_state != 'welcome':
-    st.markdown('<div class="hide-sidebar">', unsafe_allow_html=True)
+# Apply gameplay CSS class only during actual gameplay (not welcome)
+if st.session_state.game_state in ['playing', 'multi-playing', 'results']:
+    st.markdown('<div class="gameplay">', unsafe_allow_html=True)
 
 # Header
 st.markdown('<p class="main-header">🌾 Harvest Horizon</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Learn Sustainable Farming with NASA Satellite Data</p>', unsafe_allow_html=True)
 
-# Sidebar - Only show in welcome state
-if st.session_state.game_state == 'welcome':
-    with st.sidebar:
+# Sidebar - Always show in welcome state
+with st.sidebar:
+    if st.session_state.game_state == 'welcome':
         st.header("📖 About Harvest Horizon")
         st.write("""
         Use real NASA satellite data to make smart farming decisions!
@@ -340,6 +340,11 @@ if st.session_state.game_state == 'welcome':
             st.session_state.game_state = 'welcome'
             st.session_state.game = None
             st.session_state.results = None
+            st.rerun()
+    else:
+        # During gameplay, show a minimal sidebar with just a menu button
+        if st.button("🏠 Main Menu", use_container_width=True):
+            st.session_state.game_state = 'welcome'
             st.rerun()
 
 # Main Game Logic
@@ -617,8 +622,8 @@ elif st.session_state.game_state == 'results':
             st.session_state.results = None
             st.rerun()
 
-# Close the hide-sidebar div if we're in gameplay
-if st.session_state.game_state != 'welcome':
+# Close the gameplay div if we're in gameplay
+if st.session_state.game_state in ['playing', 'multi-playing', 'results']:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer
