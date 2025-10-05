@@ -17,7 +17,8 @@ import os
 st.set_page_config(
     page_title="Harvest Horizon: The Satellite Steward",
     page_icon="🌾",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"  # Start with sidebar expanded
 )
 
 # Simple responsive CSS - ONLY AUTO-RESIZE FIXES
@@ -35,6 +36,11 @@ st.markdown("""
             width: 100% !important;
             min-width: 100% !important;
         }
+    }
+    
+    /* Hide sidebar when game is playing */
+    .sidebar-collapsed .sidebar-content {
+        display: none;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -293,37 +299,43 @@ if 'game_state' not in st.session_state:
 st.markdown('<p class="main-header">🌾 Harvest Horizon</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Learn Sustainable Farming with NASA Satellite Data</p>', unsafe_allow_html=True)
 
-# Sidebar
-with st.sidebar:
-    st.header("📖 About Harvest Horizon")
-    st.write("""
-    Use real NASA satellite data to make smart farming decisions!
-    
-    **Learn about:**
-    - Temperature monitoring
-    - Soil moisture analysis
-    - Precipitation patterns
-    - Sustainable practices
-    """)
-    
-    st.divider()
-    
-    st.header("🛰️ NASA Data Sources")
-    st.write("""
-    - **T2M**: Temperature at 2m
-    - **PRECTOTCORR**: Precipitation
-    - **GWETROOT**: Soil Moisture
-    - **ALLSKY_SFC_SW_DWN**: Solar Radiation
-    
-    *Data: NASA POWER API*
-    """)
-    
-    st.divider()
-    
-    if st.button("🔄 Restart Game", use_container_width=True):
+# Sidebar - Only show in welcome state
+if st.session_state.game_state == 'welcome':
+    with st.sidebar:
+        st.header("📖 About Harvest Horizon")
+        st.write("""
+        Use real NASA satellite data to make smart farming decisions!
+        
+        **Learn about:**
+        - Temperature monitoring
+        - Soil moisture analysis
+        - Precipitation patterns
+        - Sustainable practices
+        """)
+        
+        st.divider()
+        
+        st.header("🛰️ NASA Data Sources")
+        st.write("""
+        - **T2M**: Temperature at 2m
+        - **PRECTOTCORR**: Precipitation
+        - **GWETROOT**: Soil Moisture
+        - **ALLSKY_SFC_SW_DWN**: Solar Radiation
+        
+        *Data: NASA POWER API*
+        """)
+        
+        st.divider()
+        
+        if st.button("🔄 Restart Game", use_container_width=True):
+            st.session_state.game_state = 'welcome'
+            st.session_state.game = None
+            st.session_state.results = None
+            st.rerun()
+else:
+    # Add a small toggle button to show sidebar during gameplay
+    if st.sidebar.button("📖 Show Info", use_container_width=True):
         st.session_state.game_state = 'welcome'
-        st.session_state.game = None
-        st.session_state.results = None
         st.rerun()
 
 # Main Game Logic
