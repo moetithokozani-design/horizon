@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import time
 import os
 
-# Page configuration
+# Page configuration - Start with sidebar expanded for welcome screen
 st.set_page_config(
     page_title="Harvest Horizon: The Satellite Steward",
     page_icon="🌾",
@@ -21,7 +21,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# CSS - Only hide sidebar during gameplay
+# CSS to completely hide sidebar during gameplay
 st.markdown("""
     <style>
     /* Mobile responsiveness */
@@ -308,9 +308,9 @@ if st.session_state.game_state in ['playing', 'multi-playing', 'results']:
 st.markdown('<p class="main-header">🌾 Harvest Horizon</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Learn Sustainable Farming with NASA Satellite Data</p>', unsafe_allow_html=True)
 
-# Sidebar - Always show in welcome state
-with st.sidebar:
-    if st.session_state.game_state == 'welcome':
+# Sidebar - Only show content in welcome state
+if st.session_state.game_state == 'welcome':
+    with st.sidebar:
         st.header("📖 About Harvest Horizon")
         st.write("""
         Use real NASA satellite data to make smart farming decisions!
@@ -341,11 +341,12 @@ with st.sidebar:
             st.session_state.game = None
             st.session_state.results = None
             st.rerun()
-    else:
-        # During gameplay, show a minimal sidebar with just a menu button
-        if st.button("🏠 Main Menu", use_container_width=True):
-            st.session_state.game_state = 'welcome'
-            st.rerun()
+
+# Add a main menu button in the main content area during gameplay
+if st.session_state.game_state in ['playing', 'multi-playing', 'results']:
+    if st.button("🏠 Main Menu", key="main_menu_main"):
+        st.session_state.game_state = 'welcome'
+        st.rerun()
 
 # Main Game Logic
 if st.session_state.game_state == 'welcome':
