@@ -13,34 +13,39 @@ import matplotlib.pyplot as plt
 import time
 import os
 
-# Page configuration
+# Page configuration - Use expanded for welcome, we'll handle hiding via CSS
 st.set_page_config(
     page_title="Harvest Horizon: The Satellite Steward",
     page_icon="🌾",
     layout="wide",
-    initial_sidebar_state="expanded"  # Start with sidebar expanded
+    initial_sidebar_state="expanded"
 )
 
-# Simple responsive CSS - ONLY AUTO-RESIZE FIXES
+# CSS to completely hide sidebar during gameplay
 st.markdown("""
     <style>
-    /* Mobile responsiveness - ONLY auto-resize fixes */
+    /* Mobile responsiveness */
     @media (max-width: 768px) {
-        /* Make sure content doesn't overflow */
         .main .block-container {
             padding-left: 1rem;
             padding-right: 1rem;
         }
-        /* Stack columns on mobile */
         [data-testid="column"] {
             width: 100% !important;
             min-width: 100% !important;
         }
     }
     
-    /* Hide sidebar when game is playing */
-    .sidebar-collapsed .sidebar-content {
-        display: none;
+    /* COMPLETELY HIDE SIDEBAR DURING GAMEPLAY */
+    .hide-sidebar section[data-testid="stSidebar"] {
+        display: none !important;
+    }
+    
+    /* Expand main content when sidebar is hidden */
+    .hide-sidebar .main .block-container {
+        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -295,6 +300,10 @@ if 'game_state' not in st.session_state:
     st.session_state.game = None
     st.session_state.results = None
 
+# Apply CSS class to body based on game state
+if st.session_state.game_state != 'welcome':
+    st.markdown('<div class="hide-sidebar">', unsafe_allow_html=True)
+
 # Header
 st.markdown('<p class="main-header">🌾 Harvest Horizon</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Learn Sustainable Farming with NASA Satellite Data</p>', unsafe_allow_html=True)
@@ -332,11 +341,6 @@ if st.session_state.game_state == 'welcome':
             st.session_state.game = None
             st.session_state.results = None
             st.rerun()
-else:
-    # Add a small toggle button to show sidebar during gameplay
-    if st.sidebar.button("📖 Show Info", use_container_width=True):
-        st.session_state.game_state = 'welcome'
-        st.rerun()
 
 # Main Game Logic
 if st.session_state.game_state == 'welcome':
@@ -607,11 +611,15 @@ elif st.session_state.game_state == 'results':
             st.rerun()
     
     with col2:
-        if st.button("🏠 New Scenario", use_container_width=True):
+        if st.button("🏠 Main Menu", use_container_width=True):
             st.session_state.game_state = 'welcome'
             st.session_state.game = None
             st.session_state.results = None
             st.rerun()
+
+# Close the hide-sidebar div if we're in gameplay
+if st.session_state.game_state != 'welcome':
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer
 st.markdown("---")
