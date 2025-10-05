@@ -1,6 +1,6 @@
 """
 FarmSense - Complete NASA Agriculture Game
-
+Copy this entire file as app.py and run with: streamlit run app.py
 """
 
 import streamlit as st
@@ -21,132 +21,41 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS with responsive design
+# Simple, clean CSS that won't break existing layout
 st.markdown("""
     <style>
-    /* Base responsive styles */
-    .main-header {
-        font-size: clamp(2rem, 5vw, 3rem);
-        color: #2E7D32;
-        text-align: center;
-        font-weight: bold;
-        margin-bottom: 10px;
-        word-wrap: break-word;
-    }
-    .sub-header {
-        font-size: clamp(1rem, 2.5vw, 1.3rem);
-        color: #558B2F;
-        text-align: center;
-        margin-bottom: 30px;
-        word-wrap: break-word;
-    }
-    .metric-card {
-        background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-        padding: clamp(15px, 3vw, 20px);
-        border-radius: 10px;
-        border-left: 5px solid #4CAF50;
-        margin: 10px 0;
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    .stat-big {
-        font-size: clamp(1.8rem, 4vw, 2.5rem);
-        font-weight: bold;
-        color: #2E7D32;
-        text-align: center;
-    }
-    .recommendation {
-        background: #FFF3E0;
-        padding: clamp(12px, 2vw, 15px);
-        border-radius: 8px;
-        border-left: 4px solid #FF9800;
-        margin: 10px 0;
-        font-size: clamp(0.9rem, 1.5vw, 1rem);
-    }
-    .success-box {
-        background: #E8F5E9;
-        padding: clamp(15px, 3vw, 20px);
-        border-radius: 10px;
-        border: 2px solid #4CAF50;
-        margin: 10px 0;
-    }
-    .warning-box {
-        background: #FFF3E0;
-        padding: clamp(15px, 3vw, 20px);
-        border-radius: 10px;
-        border: 2px solid #FF9800;
-        margin: 10px 0;
-    }
-    .game-board {
-        background: #1a3c27;
-        padding: clamp(15px, 2vw, 20px);
-        border-radius: 15px;
-        border: 3px solid #8bc34a;
-        margin: 20px 0;
-    }
-    
-    /* Mobile-specific adjustments */
+    /* Mobile responsiveness */
     @media (max-width: 768px) {
+        .main-header {
+            font-size: 2rem !important;
+        }
+        .sub-header {
+            font-size: 1.1rem !important;
+        }
+        /* Make buttons full width on mobile */
         .stButton button {
             width: 100%;
-            margin: 5px 0;
         }
-        .stRadio > div {
-            flex-direction: column;
-        }
-        .stRadio label {
-            margin-bottom: 10px;
+        /* Stack columns on mobile */
+        [data-testid="column"] {
+            min-width: 100% !important;
         }
     }
     
-    /* Ensure proper spacing on mobile */
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
+    /* Ensure content doesn't get too small */
+    .main .block-container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
     }
     
-    /* Responsive metric containers */
-    .metric-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin: 1rem 0;
-    }
-    
-    /* Responsive columns */
-    .responsive-columns {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1rem;
-    }
-    
-    /* Mobile-first button styles */
-    .mobile-friendly-btn {
-        min-height: 3rem;
-        font-size: clamp(0.9rem, 2vw, 1.1rem);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    /* Responsive text */
+    /* Basic responsive text */
     .responsive-text {
-        font-size: clamp(0.9rem, 1.5vw, 1rem);
-        line-height: 1.5;
+        font-size: 1rem;
     }
     
-    /* Chart responsiveness */
-    .stPlotlyChart, .stPyplot {
-        max-width: 100%;
-        height: auto;
-    }
-    
-    /* Sidebar adjustments for mobile */
-    @media (max-width: 768px) {
-        .sidebar .sidebar-content {
-            padding: 1rem;
+    @media (max-width: 480px) {
+        .responsive-text {
+            font-size: 0.9rem;
         }
     }
     </style>
@@ -321,7 +230,7 @@ class FarmingSimulator:
         return "\n".join(feedback)
 
     def generate_html_dashboard(self, scenario_name):
-        """Generate the complete HTML game dashboard with responsive design"""
+        """Generate the complete HTML game dashboard with proper responsive design"""
         html_content = f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -341,78 +250,59 @@ class FarmingSimulator:
                     background: linear-gradient(135deg, #1a3c27 0%, #2d5e3f 100%);
                     color: #fff;
                     min-height: 100vh;
-                    padding: clamp(10px, 3vw, 20px);
-                    overflow-x: hidden;
+                    padding: 20px;
                 }}
 
                 .container {{
-                    max-width: min(1200px, 95vw);
+                    max-width: 1200px;
                     margin: 0 auto;
                 }}
 
                 header {{
                     text-align: center;
-                    padding: clamp(15px, 3vw, 20px) 0;
-                    margin-bottom: clamp(15px, 3vw, 20px);
-                    border-bottom: 2px solid rgba(139, 195, 74, 0.3);
+                    padding: 20px 0;
+                    margin-bottom: 20px;
                 }}
 
                 h1 {{
-                    font-size: clamp(1.8rem, 6vw, 2.8rem);
-                    margin-bottom: clamp(8px, 2vw, 10px);
+                    font-size: 2.5rem;
+                    margin-bottom: 10px;
                     background: linear-gradient(to right, #8bc34a, #4caf50, #2e7d32);
                     -webkit-background-clip: text;
                     background-clip: text;
                     color: transparent;
-                    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-                    word-wrap: break-word;
                 }}
 
-                .subtitle {{
-                    font-size: clamp(1rem, 3vw, 1.2rem);
-                    color: #c8e6c9;
-                    max-width: min(800px, 90vw);
-                    margin: 0 auto;
-                    line-height: 1.5;
+                .game-area {{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    align-items: center;
                 }}
 
                 .game-board {{
                     width: 100%;
+                    max-width: 600px;
                     aspect-ratio: 1;
-                    max-width: min(600px, 90vw);
-                    margin: clamp(15px, 3vw, 20px) auto;
                     background: #1e4620;
                     border-radius: 10px;
                     border: 3px solid #8bc34a;
                     display: grid;
                     grid-template-columns: repeat(11, 1fr);
                     grid-template-rows: repeat(11, 1fr);
-                    gap: 1px;
+                    gap: 2px;
                     padding: 5px;
-                    position: relative;
-                    overflow: hidden;
-                    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
                 }}
 
                 .board-cell {{
                     background: rgba(255, 255, 255, 0.08);
-                    border-radius: 3px;
+                    border-radius: 4px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: clamp(0.5rem, 1.5vw, 0.65rem);
-                    text-align: center;
-                    padding: 2px;
+                    font-size: 0.7rem;
                     border: 1px solid rgba(255, 255, 255, 0.15);
                     cursor: pointer;
-                    transition: all 0.3s ease;
-                    font-weight: 500;
-                    word-break: break-word;
-                }}
-
-                .board-cell:hover {{
-                    background: rgba(255, 255, 255, 0.15);
-                    transform: scale(1.05);
                 }}
 
                 .cell-problem {{ background: rgba(255, 87, 34, 0.4) !important; }}
@@ -422,132 +312,84 @@ class FarmingSimulator:
                 .cell-market {{ background: rgba(156, 39, 176, 0.4) !important; }}
                 .cell-quiz {{ background: rgba(0, 188, 212, 0.4) !important; }}
 
-                .player-token {{
-                    width: clamp(20px, 4vw, 28px);
-                    height: clamp(20px, 4vw, 28px);
-                    border-radius: 50%;
-                    position: absolute;
-                    border: 2px solid white;
+                .dice-container {{
                     display: flex;
+                    gap: 15px;
                     align-items: center;
-                    justify-content: center;
-                    color: white;
-                    font-weight: bold;
-                    font-size: clamp(10px, 2vw, 12px);
-                    transition: all 0.5s ease;
-                    z-index: 10;
-                    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+                    background: rgba(0, 0, 0, 0.4);
+                    padding: 15px 25px;
+                    border-radius: 50px;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
                 }}
 
-                .game-controls {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                    gap: clamp(8px, 2vw, 10px);
-                    justify-content: center;
-                    margin-bottom: clamp(15px, 3vw, 20px);
-                    padding: 0 clamp(10px, 3vw, 20px);
-                }}
-
-                .control-btn {{
-                    padding: clamp(10px, 2vw, 12px) clamp(15px, 3vw, 20px);
-                    background: rgba(255, 255, 255, 0.1);
-                    color: white;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 25px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    font-weight: 500;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                    font-size: clamp(0.8rem, 2vw, 1rem);
-                    text-align: center;
-                    min-height: 44px; /* Mobile touch friendly */
-                }}
-
-                .control-btn:hover {{
-                    background: rgba(255, 255, 255, 0.2);
-                    transform: translateY(-2px);
-                }}
-
-                .dashboard {{
-                    background: rgba(255, 255, 255, 0.1);
-                    border-radius: 15px;
-                    padding: clamp(15px, 3vw, 20px);
-                    display: flex;
-                    flex-direction: column;
-                    margin: clamp(15px, 3vw, 20px) auto;
-                    max-width: min(500px, 90vw);
-                }}
-
-                .stats-grid {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-                    gap: clamp(8px, 2vw, 12px);
-                    margin-bottom: clamp(15px, 3vw, 20px);
-                }}
-
-                .stat-card {{
-                    background: rgba(0, 0, 0, 0.2);
-                    padding: clamp(12px, 2vw, 15px);
+                .dice {{
+                    width: 60px;
+                    height: 60px;
+                    background: white;
                     border-radius: 10px;
-                    border-left: 4px solid #4caf50;
-                    transition: all 0.3s ease;
-                    min-height: 80px;
                     display: flex;
-                    flex-direction: column;
+                    align-items: center;
                     justify-content: center;
-                }}
-
-                .stat-card h3 {{
-                    font-size: clamp(0.8rem, 2vw, 0.9rem);
-                    color: #c8e6c9;
-                    margin-bottom: 8px;
-                }}
-
-                .stat-value {{
-                    font-size: clamp(1.2rem, 3vw, 1.4rem);
+                    font-size: 1.8rem;
                     font-weight: bold;
+                    color: #333;
                 }}
 
-                /* Mobile-specific adjustments */
+                .roll-btn {{
+                    padding: 14px 30px;
+                    background: linear-gradient(to right, #ff9800, #ff5722);
+                    color: white;
+                    border: none;
+                    border-radius: 30px;
+                    font-size: 1.1rem;
+                    font-weight: bold;
+                    cursor: pointer;
+                }}
+
+                /* Mobile responsiveness */
+                @media (max-width: 768px) {{
+                    .container {{
+                        padding: 10px;
+                    }}
+                    
+                    h1 {{
+                        font-size: 2rem;
+                    }}
+                    
+                    .game-board {{
+                        max-width: 100%;
+                        font-size: 0.6rem;
+                    }}
+                    
+                    .dice {{
+                        width: 50px;
+                        height: 50px;
+                        font-size: 1.5rem;
+                    }}
+                    
+                    .roll-btn {{
+                        padding: 12px 25px;
+                        font-size: 1rem;
+                    }}
+                }}
+
                 @media (max-width: 480px) {{
-                    .game-board {{
-                        grid-template-columns: repeat(11, 1fr);
-                        grid-template-rows: repeat(11, 1fr);
-                        gap: 1px;
+                    h1 {{
+                        font-size: 1.8rem;
                     }}
                     
-                    .board-cell {{
+                    .game-board {{
                         font-size: 0.5rem;
-                        padding: 1px;
                     }}
                     
-                    .game-controls {{
-                        grid-template-columns: 1fr;
+                    .dice-container {{
+                        padding: 12px 20px;
                     }}
                     
-                    .stats-grid {{
-                        grid-template-columns: 1fr;
-                    }}
-                }}
-
-                /* Tablet adjustments */
-                @media (min-width: 481px) and (max-width: 768px) {{
-                    .game-controls {{
-                        grid-template-columns: repeat(2, 1fr);
-                    }}
-                    
-                    .stats-grid {{
-                        grid-template-columns: repeat(2, 1fr);
-                    }}
-                }}
-
-                /* Large screen adjustments */
-                @media (min-width: 1200px) {{
-                    .game-board {{
-                        max-width: 600px;
+                    .dice {{
+                        width: 45px;
+                        height: 45px;
+                        font-size: 1.3rem;
                     }}
                 }}
             </style>
@@ -556,45 +398,22 @@ class FarmingSimulator:
             <div class="container">
                 <header>
                     <h1>Harvest Horizon: The Satellite Steward</h1>
-                    <p class="subtitle">Roll the dice, manage your farm with NASA data, and achieve agricultural resilience!</p>
+                    <p style="color: #c8e6c9;">Roll the dice, manage your farm with NASA data!</p>
                 </header>
 
-                <div class="game-controls">
-                    <button class="control-btn" onclick="showModal('region-modal')">🌍 Change Region</button>
-                    <button class="control-btn" onclick="showModal('climate-modal')">🌡️ Climate</button>
-                    <button class="control-btn" onclick="showModal('players-modal')">👥 Players</button>
-                    <button class="control-btn" onclick="showModal('resources-modal')">🛰️ NASA Resources</button>
-                    <button class="control-btn" onclick="resetGame()">🔄 Reset Game</button>
-                </div>
-
-                <div class="game-board" id="game-board">
-                    <!-- Board cells will be generated by JavaScript -->
-                </div>
-
-                <div class="dashboard">
-                    <div class="turn-indicator" id="turn-indicator">
-                        Player 1's Turn - Roll the dice!
+                <div class="game-area">
+                    <div class="game-board" id="game-board">
+                        <!-- Board cells will be generated by JavaScript -->
                     </div>
 
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3>CASH ON HAND</h3>
-                            <div class="stat-value" id="cash">$10,000</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>PASSIVE INCOME</h3>
-                            <div class="stat-value" id="passive-income">$500</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>MONTHLY EXPENSES</h3>
-                            <div class="stat-value" id="expenses">$3,000</div>
-                        </div>
+                    <div class="dice-container">
+                        <div class="dice" id="dice">1</div>
+                        <button class="roll-btn" onclick="rollDice()">Roll Dice</button>
                     </div>
                 </div>
             </div>
 
             <script>
-                // Initialize game board
                 function initializeBoard() {{
                     const gameBoard = document.getElementById('game-board');
                     const boardSize = 11;
@@ -606,54 +425,50 @@ class FarmingSimulator:
                         cell.className = 'board-cell';
                         
                         if (i === 0) {{
-                            cell.classList.add('corner-cell');
                             cell.textContent = 'START';
                         }} else if (i === boardSize-1 || i === totalCells-1 || i === totalCells-boardSize) {{
-                            cell.classList.add('corner-cell', 'cell-nasa');
+                            cell.classList.add('cell-nasa');
                             cell.textContent = 'NASA';
                         }} else {{
                             const cellType = cellTypes[Math.floor(Math.random() * cellTypes.length)];
-                            let displayText = '';
-                            
                             switch(cellType) {{
-                                case 'problem': displayText = 'PROB'; cell.classList.add('cell-problem'); break;
-                                case 'opportunity': displayText = 'OPP'; cell.classList.add('cell-opportunity'); break;
-                                case 'asset': displayText = 'ASSET'; cell.classList.add('cell-asset'); break;
-                                case 'nasa-data': displayText = 'NASA'; cell.classList.add('cell-nasa'); break;
-                                case 'market': displayText = 'MKT'; cell.classList.add('cell-market'); break;
-                                case 'quiz': displayText = 'QUIZ'; cell.classList.add('cell-quiz'); break;
+                                case 'problem': cell.textContent = 'PROB'; cell.classList.add('cell-problem'); break;
+                                case 'opportunity': cell.textContent = 'OPP'; cell.classList.add('cell-opportunity'); break;
+                                case 'asset': cell.textContent = 'ASSET'; cell.classList.add('cell-asset'); break;
+                                case 'nasa-data': cell.textContent = 'NASA'; cell.classList.add('cell-nasa'); break;
+                                case 'market': cell.textContent = 'MKT'; cell.classList.add('cell-market'); break;
+                                case 'quiz': cell.textContent = 'QUIZ'; cell.classList.add('cell-quiz'); break;
                             }}
-                            
-                            cell.textContent = displayText;
                         }}
                         
                         cell.addEventListener('click', function() {{
-                            alert('You clicked: ' + this.textContent + '\\nThis is where educational content would appear!');
+                            alert('You clicked: ' + this.textContent);
                         }});
                         
                         gameBoard.appendChild(cell);
                     }}
                 }}
 
-                // Initialize when page loads
+                function rollDice() {{
+                    const dice = document.getElementById('dice');
+                    const rolls = 10;
+                    let count = 0;
+                    
+                    const rollInterval = setInterval(() => {{
+                        const value = Math.floor(Math.random() * 6) + 1;
+                        dice.textContent = value;
+                        dice.style.transform = 'rotate(' + (count * 45) + 'deg)';
+                        count++;
+                        
+                        if (count >= rolls) {{
+                            clearInterval(rollInterval);
+                            dice.style.transform = 'rotate(0deg)';
+                            alert('You rolled a ' + value + '! Move ' + value + ' spaces.');
+                        }}
+                    }}, 100);
+                }}
+
                 document.addEventListener('DOMContentLoaded', initializeBoard);
-
-                // Handle window resize
-                window.addEventListener('resize', function() {{
-                    // Board automatically adjusts due to CSS
-                    console.log('Screen resized - board should be responsive');
-                }});
-
-                // Placeholder functions for game features
-                function showModal(modalId) {{
-                    alert('Modal: ' + modalId + ' would open here');
-                }}
-
-                function resetGame() {{
-                    if (confirm('Reset the game?')) {{
-                        location.reload();
-                    }}
-                }}
             </script>
         </body>
         </html>
@@ -698,14 +513,13 @@ if 'game_state' not in st.session_state:
     st.session_state.game = None
     st.session_state.results = None
 
-# Header with responsive design
-st.markdown('<p class="main-header">🌾 Harvest Horizon</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Learn Sustainable Farming with NASA Satellite Data</p>', unsafe_allow_html=True)
+# Header
+st.markdown('<h1 style="text-align: center; color: #2E7D32;">🌾 Harvest Horizon</h1>', unsafe_allow_html=True)
+st.markdown('<p style="text-align: center; color: #558B2F; font-size: 1.2rem;">Learn Sustainable Farming with NASA Satellite Data</p>', unsafe_allow_html=True)
 
 # Sidebar
 with st.sidebar:
     st.header("📖 About Harvest Horizon")
-    st.markdown('<div class="responsive-text">', unsafe_allow_html=True)
     st.write("""
     Use real NASA satellite data to make smart farming decisions!
     
@@ -715,12 +529,10 @@ with st.sidebar:
     - Precipitation patterns
     - Sustainable practices
     """)
-    st.markdown('</div>', unsafe_allow_html=True)
     
     st.divider()
     
     st.header("🛰️ NASA Data Sources")
-    st.markdown('<div class="responsive-text">', unsafe_allow_html=True)
     st.write("""
     - **T2M**: Temperature at 2m
     - **PRECTOTCORR**: Precipitation
@@ -729,11 +541,10 @@ with st.sidebar:
     
     *Data: NASA POWER API*
     """)
-    st.markdown('</div>', unsafe_allow_html=True)
     
     st.divider()
     
-    if st.button("🔄 Restart Game", use_container_width=True, key="restart_btn"):
+    if st.button("🔄 Restart Game", use_container_width=True):
         st.session_state.game_state = 'welcome'
         st.session_state.game = None
         st.session_state.results = None
@@ -743,23 +554,21 @@ with st.sidebar:
 if st.session_state.game_state == 'welcome':
     st.markdown("---")
     
-    # Responsive columns for welcome screen
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        st.markdown("""
-        <div class="success-box">
-        <h3 style="color: green; font-size: clamp(1.2rem, 3vw, 1.5rem);">🎯 Your Mission</h3>
-        <p style="color: green; font-size: clamp(0.9rem, 2vw, 1rem);">You're a farm manager using NASA satellite data to optimize your harvest. 
-        Make smart decisions about irrigation and fertilization based on real climate data!</p>
-        <p style="color: green; font-size: clamp(0.9rem, 2vw, 1rem);"><strong>Goal:</strong> Maximize yield while conserving resources.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.success("""
+        **🎯 Your Mission**
+        
+        You're a farm manager using NASA satellite data to optimize your harvest. 
+        Make smart decisions about irrigation and fertilization based on real climate data!
+        
+        **Goal:** Maximize yield while conserving resources.
+        """)
         
         st.write("")
         st.subheader("Choose Your Farm:")
         
-        # Responsive scenario selection
         scenario_choice = st.radio(
             "Select difficulty level:",
             options=list(SCENARIOS.keys()),
@@ -771,11 +580,10 @@ if st.session_state.game_state == 'welcome':
         
         st.write("")
         
-        # Responsive button layout
         col_btn1, col_btn2 = st.columns(2)
         
         with col_btn1:
-            if st.button("🚀 Start Farming", use_container_width=True, type="primary", key="start_farming"):
+            if st.button("🚀 Start Farming", use_container_width=True, type="primary"):
                 st.session_state.current_scenario = scenario_choice
                 st.session_state.game = FarmingSimulator(SCENARIOS[scenario_choice])
                 
@@ -787,13 +595,12 @@ if st.session_state.game_state == 'welcome':
                 st.rerun()
         
         with col_btn2:
-            if st.button("🎮 Multiplayer Game", use_container_width=True, type="secondary", key="multiplayer"):
+            if st.button("🎮 Multiplayer Game", use_container_width=True, type="secondary"):
                 st.session_state.current_scenario = scenario_choice
                 st.session_state.game = FarmingSimulator(SCENARIOS[scenario_choice])
                 
                 with st.spinner("Loading NASA satellite data and game board..."):
                     st.session_state.game.load_nasa_data(st.session_state.nasa_fetcher)
-                    # Generate the HTML dashboard
                     html_content = st.session_state.game.generate_html_dashboard(scenario_choice)
                     time.sleep(1)
                 
@@ -805,11 +612,10 @@ if st.session_state.game_state == 'welcome':
 elif st.session_state.get('game_state') == 'multi-playing' and st.session_state.get('show_dashboard'):
     st.subheader("🎮 Harvest Horizon: The Satellite Steward - Multiplayer")
     
-    # Responsive container for the HTML game
     if os.path.exists("dashboard.html"):
-        # Use responsive height based on screen size
+        # Use a reasonable height that works on most devices
         components.html(open("dashboard.html", "r", encoding="utf-8").read(), 
-                       height=800,  # Fixed height that works on most devices
+                       height=700,
                        scrolling=True)
     else:
         st.warning("Dashboard not yet generated.")
@@ -827,8 +633,7 @@ elif st.session_state.game_state == 'playing':
     st.markdown("---")
     st.header("🌍 Step 1: Review NASA Satellite Data")
     
-    # Responsive metrics grid
-    st.markdown('<div class="metric-container">', unsafe_allow_html=True)
+    # Metrics - use columns but they'll stack on mobile naturally
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -851,7 +656,6 @@ elif st.session_state.game_state == 'playing':
             f"{analysis['avg_soil_moisture']}",
             help="0-1 scale. Optimal: 0.3-0.5"
         )
-    st.markdown('</div>', unsafe_allow_html=True)
     
     # Recommendations
     st.markdown("---")
@@ -859,11 +663,10 @@ elif st.session_state.game_state == 'playing':
     
     recs = game.generate_recommendations(analysis)
     for rec in recs:
-        st.markdown(f'<div class="recommendation">{rec}</div>', unsafe_allow_html=True)
+        st.warning(rec)
     
-    # Responsive visualization columns
+    # Visualization
     with st.expander("📊 View Detailed Data Charts"):
-        st.markdown('<div class="responsive-columns">', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         
         with col1:
@@ -873,7 +676,7 @@ elif st.session_state.game_state == 'playing':
             ax.set_xlabel('Days Ago')
             ax.set_ylabel('Temperature (°C)')
             ax.grid(True, alpha=0.3)
-            st.pyplot(fig, use_container_width=True)
+            st.pyplot(fig)
             plt.close()
         
         with col2:
@@ -883,24 +686,17 @@ elif st.session_state.game_state == 'playing':
             ax.set_xlabel('Days Ago')
             ax.set_ylabel('Rainfall (mm)')
             ax.grid(True, alpha=0.3, axis='y')
-            st.pyplot(fig, use_container_width=True)
+            st.pyplot(fig)
             plt.close()
-        st.markdown('</div>', unsafe_allow_html=True)
     
     # Decision Making
     st.markdown("---")
     st.header("🎮 Step 2: Make Your Farming Decisions")
     
-    st.markdown("""
-    <div class="warning-box">
-    <strong>⚠️ Think carefully!</strong> Base your decisions on the NASA data above.
-    </div>
-    """, unsafe_allow_html=True)
+    st.warning("**⚠️ Think carefully!** Base your decisions on the NASA data above.")
     
     st.write("")
     
-    # Responsive decision columns
-    st.markdown('<div class="responsive-columns">', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     
     with col1:
@@ -935,11 +731,8 @@ elif st.session_state.game_state == 'playing':
         elif fertilizer < 30:
             st.info("💡 Low fertilizer may limit growth")
     
-    st.markdown('</div>', unsafe_allow_html=True)
-    
     st.write("")
     
-    # Responsive harvest button
     if st.button("🌾 Harvest & See Results", use_container_width=True, type="primary"):
         results = game.calculate_yield(irrigation, fertilizer)
         st.session_state.results = results
@@ -953,7 +746,7 @@ elif st.session_state.game_state == 'results':
     st.markdown("---")
     st.header("📊 Harvest Results")
     
-    # Big yield display with responsive layout
+    # Big yield display
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
@@ -967,13 +760,11 @@ elif st.session_state.game_state == 'results':
         else:
             st.error("❌ Needs Improvement")
         
-        st.markdown(f'<div class="metric-card"><div class="stat-big">{yield_pct}%</div><div>Crop Yield</div></div>', 
-                    unsafe_allow_html=True)
+        st.metric("Crop Yield", f"{yield_pct}%")
     
     st.markdown("---")
     
-    # Responsive results columns
-    st.markdown('<div class="responsive-columns">', unsafe_allow_html=True)
+    # Details
     col1, col2 = st.columns(2)
     
     with col1:
@@ -1001,30 +792,24 @@ elif st.session_state.game_state == 'results':
         ax.axis('off')
         ax.text(yield_pct/2, 0, f'{yield_pct}%', ha='center', va='center', 
                 fontsize=16, fontweight='bold', color='white')
-        st.pyplot(fig, use_container_width=True)
+        st.pyplot(fig)
         plt.close()
-    
-    st.markdown('</div>', unsafe_allow_html=True)
     
     # Educational content
     st.markdown("---")
     st.subheader("📚 What You Learned")
-    st.markdown("""
-    <div class="success-box">
-    <p style="color: blue;"><strong>NASA satellite data helps farmers:</strong></p>
-    <ul>
-        <li style="color: blue;">✅ Monitor soil moisture for optimal irrigation</li>
-        <li style="color: blue;">✅ Track temperature and rainfall patterns</li>
-        <li style="color: blue;">✅ Make data-driven conservation decisions</li>
-        <li style="color: blue;">✅ Improve yields sustainably (15-25% increase possible!)</li>
-        <li style="color: blue;">✅ Save water (20-30% reduction with precision agriculture)</li>
-    </ul>
-    </div>
-    """, unsafe_allow_html=True)
+    st.success("""
+    **NASA satellite data helps farmers:**
+    
+    ✅ Monitor soil moisture for optimal irrigation
+    ✅ Track temperature and rainfall patterns  
+    ✅ Make data-driven conservation decisions
+    ✅ Improve yields sustainably (15-25% increase possible!)
+    ✅ Save water (20-30% reduction with precision agriculture)
+    """)
     
     st.write("")
     
-    # Responsive button layout
     col1, col2 = st.columns(2)
     with col1:
         if st.button("🔄 Try Again", use_container_width=True, type="primary"):
@@ -1042,7 +827,7 @@ elif st.session_state.game_state == 'results':
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style='text-align: center; color: #666; padding: 20px; font-size: clamp(0.8rem, 2vw, 1rem);'>
+<div style='text-align: center; color: #666; padding: 20px;'>
     <p><strong>FarmSense</strong> - NASA Space Apps Challenge 2025</p>
     <p>Data Source: NASA POWER API | Built with Python & Streamlit</p>
     <p>🌾 Empowering sustainable agriculture through space technology 🛰️</p>
