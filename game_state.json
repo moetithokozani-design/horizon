@@ -1,0 +1,26 @@
+{
+  "current_player": 0,
+  "players": [
+    {
+      "name": "Player 1",
+      "position": 4,
+      "cash": 1300,
+      "sustainability": 9,
+      "assets": [
+        "irrigation_system"
+      ]
+    },
+    {
+      "name": "Player 2",
+      "position": 3,
+      "cash": 11500,
+      "sustainability": 7,
+      "assets": []
+    }
+  ],
+  "game_state": "SHOP",
+  "dice_value": 6,
+  "current_card": null,
+  "selected_solution": null,
+  "last_update": "2025-10-04T16:55:55Z"
+}

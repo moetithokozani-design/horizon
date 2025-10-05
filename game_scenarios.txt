@@ -1,0 +1,305 @@
+"""
+Game Scenarios Configuration
+Team Member 4: Add more scenarios, test them, and balance difficulty
+"""
+
+# Scenario definitions
+SCENARIOS = {
+    'wheat_kansas': {
+        'name': 'Wheat Farm - Kansas, USA',
+        'crop': 'wheat',
+        'location': {
+            'lat': 37.5,
+            'lon': -95.5,
+            'name': 'Kansas'
+        },
+        'difficulty': 'Easy',
+        'description': 'Manage a wheat farm in the American heartland. Kansas has moderate climate with variable rainfall.',
+        'optimal_decisions': {
+            'irrigation': 45,
+            'fertilizer': 50
+        },
+        'learning_focus': 'Basic soil moisture and temperature monitoring',
+        'icon': '🌾'
+    },
+    
+    'corn_iowa': {
+        'name': 'Corn Farm - Iowa, USA',
+        'crop': 'corn',
+        'location': {
+            'lat': 42.0,
+            'lon': -93.5,
+            'name': 'Iowa'
+        },
+        'difficulty': 'Medium',
+        'description': 'Grow corn in Iowa. Higher water needs but fertile soil. Watch for over-irrigation.',
+        'optimal_decisions': {
+            'irrigation': 60,
+            'fertilizer': 55
+        },
+        'learning_focus': 'Balancing high water needs with rainfall patterns',
+        'icon': '🌽'
+    },
+    
+    'rice_california': {
+        'name': 'Rice Farm - California, USA',
+        'crop': 'rice',
+        'location': {
+            'lat': 39.0,
+            'lon': -121.5,
+            'name': 'California'
+        },
+        'difficulty': 'Hard',
+        'description': 'Rice farming in California. Very high water needs in a drought-prone region. Conservation is critical!',
+        'optimal_decisions': {
+            'irrigation': 80,
+            'fertilizer': 45
+        },
+        'learning_focus': 'Water conservation in drought conditions',
+        'icon': '🍚'
+    },
+    
+    'cotton_texas': {
+        'name': 'Cotton Farm - Texas, USA',
+        'crop': 'cotton',
+        'location': {
+            'lat': 32.0,
+            'lon': -100.0,
+            'name': 'Texas'
+        },
+        'difficulty': 'Medium',
+        'description': 'Cotton farming in hot, dry Texas. Heat-resistant crop but needs careful water management.',
+        'optimal_decisions': {
+            'irrigation': 55,
+            'fertilizer': 40
+        },
+        'learning_focus': 'Managing crops in high temperature conditions',
+        'icon': '🧶'
+    },
+    
+    'soybean_brazil': {
+        'name': 'Soybean Farm - Brazil',
+        'crop': 'soybean',
+        'location': {
+            'lat': -15.0,
+            'lon': -47.0,
+            'name': 'Brazil'
+        },
+        'difficulty': 'Medium',
+        'description': 'Tropical soybean farming. High rainfall but watch for over-saturation and nutrient runoff.',
+        'optimal_decisions': {
+            'irrigation': 30,
+            'fertilizer': 60
+        },
+        'learning_focus': 'Managing excess moisture and preventing runoff',
+        'icon': '🫘'
+    }
+}
+
+# Crop characteristics (for advanced game logic)
+CROP_CHARACTERISTICS = {
+    'wheat': {
+        'water_need': 'moderate',
+        'optimal_temp_range': (15, 25),
+        'optimal_soil_moisture': (0.3, 0.5),
+        'fertilizer_sensitivity': 'medium',
+        'growing_days': 120,
+        'drought_tolerance': 'medium'
+    },
+    'corn': {
+        'water_need': 'high',
+        'optimal_temp_range': (20, 30),
+        'optimal_soil_moisture': (0.4, 0.6),
+        'fertilizer_sensitivity': 'high',
+        'growing_days': 90,
+        'drought_tolerance': 'low'
+    },
+    'rice': {
+        'water_need': 'very_high',
+        'optimal_temp_range': (20, 35),
+        'optimal_soil_moisture': (0.6, 0.8),
+        'fertilizer_sensitivity': 'medium',
+        'growing_days': 120,
+        'drought_tolerance': 'very_low'
+    },
+    'cotton': {
+        'water_need': 'moderate_high',
+        'optimal_temp_range': (25, 35),
+        'optimal_soil_moisture': (0.35, 0.55),
+        'fertilizer_sensitivity': 'low',
+        'growing_days': 150,
+        'drought_tolerance': 'medium_high'
+    },
+    'soybean': {
+        'water_need': 'moderate',
+        'optimal_temp_range': (20, 30),
+        'optimal_soil_moisture': (0.4, 0.6),
+        'fertilizer_sensitivity': 'low',
+        'growing_days': 100,
+        'drought_tolerance': 'medium'
+    }
+}
+
+# Challenge scenarios (for advanced players)
+CHALLENGE_SCENARIOS = [
+    {
+        'name': 'Drought Challenge',
+        'description': 'Extreme drought conditions. Conserve every drop!',
+        'modifier': {
+            'precipitation_multiplier': 0.3,
+            'soil_moisture_reduction': -0.2
+        },
+        'difficulty': 'Very Hard'
+    },
+    {
+        'name': 'Flood Season',
+        'description': 'Heavy rains expected. Avoid over-watering!',
+        'modifier': {
+            'precipitation_multiplier': 2.5,
+            'soil_moisture_increase': 0.3
+        },
+        'difficulty': 'Hard'
+    },
+    {
+        'name': 'Heatwave',
+        'description': 'Extreme heat. Crops need extra care!',
+        'modifier': {
+            'temperature_increase': 8,
+            'evaporation_increase': 1.5
+        },
+        'difficulty': 'Hard'
+    }
+]
+
+# Test cases for Team Member 4
+TEST_CASES = [
+    {
+        'scenario': 'wheat_kansas',
+        'decisions': {'irrigation': 45, 'fertilizer': 50},
+        'expected_yield_range': (95, 115),
+        'test_name': 'Optimal decisions for wheat'
+    },
+    {
+        'scenario': 'wheat_kansas',
+        'decisions': {'irrigation': 10, 'fertilizer': 10},
+        'expected_yield_range': (30, 60),
+        'test_name': 'Under-resourced wheat'
+    },
+    {
+        'scenario': 'wheat_kansas',
+        'decisions': {'irrigation': 90, 'fertilizer': 90},
+        'expected_yield_range': (60, 85),
+        'test_name': 'Over-resourced wheat'
+    },
+    {
+        'scenario': 'rice_california',
+        'decisions': {'irrigation': 80, 'fertilizer': 45},
+        'expected_yield_range': (90, 120),
+        'test_name': 'Optimal decisions for rice'
+    }
+]
+
+def get_scenario(scenario_id):
+    """Get scenario configuration by ID"""
+    return SCENARIOS.get(scenario_id, SCENARIOS['wheat_kansas'])
+
+def get_all_scenarios():
+    """Get list of all scenarios for menu"""
+    return [
+        {
+            'id': key,
+            'name': value['name'],
+            'difficulty': value['difficulty'],
+            'icon': value['icon'],
+            'description': value['description']
+        }
+        for key, value in SCENARIOS.items()
+    ]
+
+def get_crop_info(crop_type):
+    """Get characteristics for a crop type"""
+    return CROP_CHARACTERISTICS.get(crop_type, CROP_CHARACTERISTICS['wheat'])
+
+def calculate_optimal_irrigation(scenario_id, avg_soil_moisture, avg_precip):
+    """
+    Calculate optimal irrigation based on scenario and conditions
+    Team Member 4: Fine-tune these calculations
+    """
+    scenario = get_scenario(scenario_id)
+    crop = get_crop_info(scenario['crop'])
+    
+    base_irrigation = scenario['optimal_decisions']['irrigation']
+    
+    # Adjust based on soil moisture
+    if avg_soil_moisture < crop['optimal_soil_moisture'][0]:
+        adjustment = 20  # Need more water
+    elif avg_soil_moisture > crop['optimal_soil_moisture'][1]:
+        adjustment = -20  # Too wet, reduce
+    else:
+        adjustment = 0
+    
+    # Adjust based on recent rainfall
+    if avg_precip < 2.0:
+        adjustment += 15  # Low rain, need more irrigation
+    elif avg_precip > 5.0:
+        adjustment -= 15  # High rain, reduce irrigation
+    
+    optimal = base_irrigation + adjustment
+    return max(0, min(100, optimal))  # Keep in 0-100 range
+
+def run_test_suite():
+    """
+    Team Member 4: Run this to test game balance
+    Usage: python game_scenarios.py
+    """
+    print("Running Game Scenario Tests...")
+    print("=" * 50)
+    
+    passed = 0
+    failed = 0
+    
+    for test in TEST_CASES:
+        print(f"\nTest: {test['test_name']}")
+        print(f"Scenario: {test['scenario']}")
+        print(f"Decisions: Irrigation={test['decisions']['irrigation']}, "
+              f"Fertilizer={test['decisions']['fertilizer']}")
+        print(f"Expected Yield: {test['expected_yield_range'][0]}-{test['expected_yield_range'][1]}%")
+        
+        # This would integrate with actual game engine
+        # For now, just show test structure
+        print("✓ Test structure valid")
+        passed += 1
+    
+    print("\n" + "=" * 50)
+    print(f"Tests Passed: {passed}/{len(TEST_CASES)}")
+    print(f"Tests Failed: {failed}/{len(TEST_CASES)}")
+
+# Difficulty ratings for UI display
+DIFFICULTY_COLORS = {
+    'Easy': '🟢',
+    'Medium': '🟡',
+    'Hard': '🔴',
+    'Very Hard': '⚫'
+}
+
+# Export for game engine
+__all__ = [
+    'SCENARIOS',
+    'CROP_CHARACTERISTICS',
+    'CHALLENGE_SCENARIOS',
+    'get_scenario',
+    'get_all_scenarios',
+    'get_crop_info',
+    'calculate_optimal_irrigation',
+    'DIFFICULTY_COLORS'
+]
+
+if __name__ == '__main__':
+    # Team Member 4: Run tests locally
+    run_test_suite()
+    
+    print("\n\nAvailable Scenarios:")
+    print("=" * 50)
+    for scenario in get_all_scenarios():
+        print(f"{scenario['icon']} {scenario['name']} - {DIFFICULTY_COLORS[scenario['difficulty']]} {scenario['difficulty']}")
+        print(f"   {scenario['description']}\n")

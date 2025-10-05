@@ -1,0 +1,77 @@
+{
+  "problem_cards": [
+    {
+      "id": "drought_01",
+      "title": "Regional Drought Warning",
+      "description": "NASA SMAP data shows critical soil moisture levels in your region.",
+      "nasa_source": "SMAP",
+      "solutions": [
+        {
+          "title": "Emergency Irrigation",
+          "cost": 3000,
+          "prerequisite": null,
+          "effect": {
+            "soil_moisture": "restored",
+            "sustainability_change": -1,
+            "message": "Used emergency irrigation to save crops."
+          }
+        },
+        {
+          "title": "Plant Drought-Resistant Crops",
+          "cost": 2000,
+          "prerequisite": null,
+          "effect": {
+            "soil_moisture": "adapted",
+            "sustainability_change": 1,
+            "message": "Switched to resilient crops."
+          }
+        }
+      ]
+    },
+    {
+      "id": "heatwave_01",
+      "title": "Extreme Heatwave",
+      "description": "ECOSTRESS data shows dangerous plant temperatures.",
+      "nasa_source": "ECOSTRESS",
+      "solutions": [
+        {
+          "title": "Install Shade Nets",
+          "cost": 2500,
+          "prerequisite": null,
+          "effect": {
+            "message": "Protected crops from heat stress.",
+            "sustainability_change": 0
+          }
+        }
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "irrigation_system",
+      "name": "Smart Irrigation System",
+      "cost": 5000,
+      "income_boost": 300,
+      "description": "Uses NASA soil moisture data for optimal watering."
+    },
+    {
+      "id": "cover_crops",
+      "name": "Cover Cropping",
+      "cost": 1500,
+      "income_boost": 100,
+      "description": "Improves soil health and prevents erosion."
+    }
+  ],
+  "board_tiles": [
+    {"type": "start", "name": "Farm HQ"},
+    {"type": "field", "name": "Wheat Field"},
+    {"type": "event", "name": "Satellite Alert"},
+    {"type": "field", "name": "Corn Field"},
+    {"type": "shop", "name": "Agri-Tech Store"},
+    {"type": "field", "name": "Soybean Field"},
+    {"type": "event", "name": "Climate Event"},
+    {"type": "field", "name": "Rice Paddy"},
+    {"type": "shop", "name": "Sustainable Seeds"},
+    {"type": "field", "name": "Vegetable Patch"}
+  ]
+}

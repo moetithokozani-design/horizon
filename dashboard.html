@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harvest Horizon: The Satellite Steward</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a3c27 0%, #2d5e3f 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(139, 195, 74, 0.3);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #8bc34a, #4caf50, #2e7d32);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #c8e6c9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        .board-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-board {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #1e4620;
+            border-radius: 10px;
+            border: 3px solid #8bc34a;
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            grid-template-rows: repeat(11, 1fr);
+            gap: 2px;
+            padding: 5px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .board-cell {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            text-align: center;
+            padding: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .board-cell:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        .corner-cell {
+            background: rgba(139, 195, 74, 0.4);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .player-token {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            position: absolute;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all 0.5s ease;
+            z-index: 10;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-1 { background: #ff5722; }
+        .player-2 { background: #2196f3; }
+        .player-3 { background: #9c27b0; }
+        .player-4 { background: #ffeb3b; color: #333; }
+
+        .dice-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dice {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+        }
+
+        .dice.rolling {
+            animation: diceRoll 0.5s infinite;
+        }
+
+        @keyframes diceRoll {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(90deg); }
+            50% { transform: rotate(180deg); }
+            75% { transform: rotate(270deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .roll-btn {
+            padding: 14px 30px;
+            background: linear-gradient(to right, #ff9800, #ff5722);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 87, 34, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .roll-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 87, 34, 0.4);
+        }
+
+        .roll-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .skip-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .skip-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 500px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #c8e6c9;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .turn-indicator {
+            background: rgba(255, 152, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #ff9800;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .asset-shop {
+            margin-top: 15px;
+        }
+
+        .asset-shop h3 {
+            margin-bottom: 15px;
+            color: #8bc34a;
+            border-bottom: 1px solid rgba(139, 195, 74, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .asset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .asset-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .buy-btn {
+            padding: 8px 18px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            background: #388e3c;
+            transform: translateY(-2px);
+        }
+
+        .buy-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .game-log {
+            flex: 1;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-log::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .game-log::-webkit-scrollbar-thumb {
+            background: rgba(139, 195, 74, 0.5);
+            border-radius: 3px;
+        }
+
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .positive { color: #8bc34a; }
+        .negative { color: #ff5722; }
+        .neutral { color: #bbdefb; }
+        .educational { color: #ffcc80; font-style: italic; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2d5e3f 0%, #1a3c27 100%);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 700px;
+            width: 90%;
+            border: 2px solid #8bc34a;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h2 {
+            color: #8bc34a;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .solution-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .solution-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .satellite-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 18px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #0b3d91;
+        }
+
+        .science-fact {
+            background: rgba(255, 193, 7, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .career-spotlight {
+            background: rgba(156, 39, 176, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #9c27b0;
+        }
+
+        .satellite-link {
+            display: inline-block;
+            background: #0b3d91;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 5px 5px 0 0;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .satellite-link:hover {
+            background: #1c5faf;
+            transform: translateY(-2px);
+        }
+
+        .region-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .region-btn {
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .region-btn.active {
+            background: #2196f3;
+            border-color: #2196f3;
+        }
+
+        .player-config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .player-toggle {
+            padding: 8px 18px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .player-toggle:hover {
+            background: #d32f2f;
+        }
+
+        .climate-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px 18px;
+            border-radius: 10px;
+            border-left: 4px solid #ff9800;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-container {
+            background: rgba(33, 150, 243, 0.2);
+            padding: 18px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .quiz-option.correct {
+            background: rgba(76, 175, 80, 0.3);
+            border: 2px solid #4caf50;
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(244, 67, 54, 0.3);
+            border: 2px solid #f44336;
+        }
+
+        .cell-problem { background: rgba(255, 87, 34, 0.4) !important; }
+        .cell-opportunity { background: rgba(76, 175, 80, 0.4) !important; }
+        .cell-asset { background: rgba(255, 193, 7, 0.4) !important; }
+        .cell-nasa { background: rgba(33, 150, 243, 0.4) !important; }
+        .cell-market { background: rgba(156, 39, 176, 0.4) !important; }
+        .cell-quiz { background: rgba(0, 188, 212, 0.4) !important; }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Harvest Horizon: The Satellite Steward</h1>
+            <p class="subtitle">Roll the dice, manage your farm with NASA data, and achieve agricultural resilience!</p>
+        </header>
+
+        <div class="game-controls">
+            <button class="control-btn" onclick="showModal('region-modal')">🌍 Change Region</button>
+            <button class="control-btn" onclick="showModal('climate-modal')">🌡️ Climate</button>
+            <button class="control-btn" onclick="showModal('players-modal')">👥 Players</button>
+            <button class="control-btn" onclick="showModal('resources-modal')">🛰️ NASA Resources</button>
+            <button class="control-btn" onclick="resetGame()">🔄 Reset Game</button>
+        </div>
+
+        <div class="game-area">
+            <div class="board-container">
+                <div class="climate-indicator">
+                    <strong>Climate: </strong><span id="climate-status">Stable</span><br>
+                    <strong>Region: </strong><span id="region-status">Mixed Crop</span>
+                </div>
+                
+                <div class="game-board" id="game-board">
+                    <!-- Board will be generated by JavaScript -->
+                </div>
+                
+                <div class="player-token player-1" id="player-1-token">1</div>
+                <div class="player-token player-2" id="player-2-token">2</div>
+                <div class="player-token player-3" id="player-3-token">3</div>
+                <div class="player-token player-4" id="player-4-token">4</div>
+                
+                <div class="dice-container">
+                    <div class="dice" id="dice">1</div>
+                    <button class="roll-btn" id="roll-btn" onclick="rollDice()">Roll Dice</button>
+                </div>
+            </div>
+
+            <div class="dashboard">
+                <div class="turn-indicator" id="turn-indicator">
+                    Player 1's Turn - Roll the dice!
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>CASH ON HAND</h3>
+                        <div class="stat-value" id="cash">$10,000</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>PASSIVE INCOME</h3>
+                        <div class="stat-value" id="passive-income">$500</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>MONTHLY EXPENSES</h3>
+                        <div class="stat-value" id="expenses">$3,000</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>SOIL MOISTURE</h3>
+                        <div class="stat-value" id="soil-moisture">Optimal</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>SUSTAINABILITY</h3>
+                        <div class="stat-value" id="sustainability">5/10</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>NASA DATA USAGE</h3>
+                        <div class="stat-value" id="nasa-usage">2/5</div>
+                    </div>
+                </div>
+
+                <div class="asset-shop">
+                    <h3>ASSET SHOP</h3>
+                    <div id="assets-container">
+                        <!-- Assets will be added here -->
+                    </div>
+                </div>
+
+                <div class="game-log" id="game-log">
+                    <div class="log-entry neutral">Game started. Player 1's turn first.</div>
+                    <div class="log-entry educational">💡 Click on board spaces to learn about agricultural science!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Problem Modal -->
+        <div class="modal" id="problem-modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="skipProblem()">×</button>
+                <h2 id="problem-title">🚨 Agricultural Challenge</h2>
+                <p id="problem-description"></p>
+                
+                <div class="satellite-info" id="satellite-info">
+                    <!-- Satellite info will be added here -->
+                </div>
+
+                <div class="science-fact" id="problem-science">
+                    <!-- Science facts will be added here -->
+                </div>
+
+                <div class="solutions-grid" id="solutions-container">
+                    <!-- Solutions will be added here -->
+                </div>
+
+                <div class="modal-footer">
+                    <button class="skip-btn" onclick="skipProblem()">Skip Challenge</button>
+                    <div style="font-size: 0.8rem; color: #bbdefb;">
+                        You can skip if you can't afford solutions
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opportunity Modal -->
+        <div class="modal" id="opportunity-modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="skipOpportunity()">×</button>
+                <h2>🌱 Agricultural Opportunity</h2>
+                <p id="opportunity-description"></p>
+                
+                <div class="satellite-info" id="opportunity-satellite">
+                    <!-- Satellite info will be added here -->
+                </div>
+
+                <div class="career-spotlight" id="opportunity-career">
+                    <!-- Career info will be added here -->
+                </div>
+
+                <div class="solutions-grid" id="opportunity-actions">
+                    <!-- Actions will be added here -->
+                </div>
+
+                <div class="modal-footer">
+                    <button class="skip-btn" onclick="skipOpportunity()">Skip Opportunity</button>
+                    <div style="font-size: 0.8rem; color: #bbdefb;">
+                        Continue without investing
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Science Quiz Modal -->
+        <div class="modal" id="quiz-modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="skipQuiz()">×</button>
+                <h2>🧠 Science Quiz</h2>
+                <div class="quiz-container" id="quiz-container">
+                    <!-- Quiz content will be added here -->
+                </div>
+                <div class="modal-footer">
+                    <button class="skip-btn" id="quiz-skip" onclick="skipQuiz()">Skip Quiz</button>
+                    <button class="roll-btn" id="quiz-continue" style="display: none;">Continue Playing</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Region Modal -->
+        <div class="modal" id="region-modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeModal('region-modal')">×</button>
+                <h2>🌍 Select Farming Region</h2>
+                <p>Choose your agricultural region - each has unique educational aspects!</p>
+                
+                <div class="region-selector">
+                    <button class="region-btn active" onclick="selectRegion('mixed')">Mixed Crop</button>
+                    <button class="region-btn" onclick="selectRegion('wine')">Wine Farm</button>
+                    <button class="region-btn" onclick="selectRegion('livestock')">Livestock</button>
+                    <button class="region-btn" onclick="selectRegion('organic')">Organic</button>
+                    <button class="region-btn" onclick="selectRegion('rice')">Rice Paddy</button>
+                </div>
+
+                <div class="science-fact" id="region-education">
+                    <h4>🌾 Mixed Crop Farming Education</h4>
+                    <p><strong>Science:</strong> Crop diversity improves soil health and reduces pest pressure through natural ecosystem balance.</p>
+                    <p><strong>NASA Connection:</strong> Satellites monitor crop health across different varieties to optimize planting strategies.</p>
+                </div>
+
+                <button class="roll-btn" onclick="closeModal('region-modal')" style="margin-top: 20px; width: 100%">Confirm Region</button>
+            </div>
+        </div>
+
+        <!-- Climate Modal -->
+        <div class="modal" id="climate-modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeModal('climate-modal')">×</button>
+                <h2>🌡️ Climate Scenarios</h2>
+                <p>Experience how climate change affects agriculture with real NASA data!</p>
+                
+                <div class="science-fact">
+                    <h4>🔬 Climate Science</h4>
+                    <p>NASA satellites track climate patterns that affect global agriculture. Understanding these patterns helps farmers adapt to changing conditions.</p>
+                </div>
+                
+                <div class="solutions-grid">
+                    <div class="solution-card" onclick="selectClimate('stable')">
+                        <h3>🌈 Stable Climate</h3>
+                        <p>Normal weather patterns - baseline for comparison</p>
+                        <div class="solution-cost">Educational: Study traditional farming methods</div>
+                    </div>
+                    <div class="solution-card" onclick="selectClimate('drought')">
+                        <h3>🌵 Extreme Drought</h3>
+                        <p>Water scarcity and high temperatures challenge traditional farming</p>
+                        <div class="solution-cost">Educational: Learn about water conservation technologies</div>
+                    </div>
+                    <div class="solution-card" onclick="selectClimate('flooding')">
+                        <h3>🌊 Increased Flooding</h3>
+                        <p>Heavy rainfall and flooding damage crops and infrastructure</p>
+                        <div class="solution-cost">Educational: Explore flood-resistant crop varieties</div>
+                    </div>
+                    <div class="solution-card" onclick="selectClimate('heatwave')">
+                        <h3>🔥 Heat Waves</h3>
+                        <p>Extended periods of extreme heat stress crops and livestock</p>
+                        <div class="solution-cost">Educational: Study heat-tolerant agricultural practices</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Players Modal -->
+        <div class="modal" id="players-modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeModal('players-modal')">×</button>
+                <h2>👥 Player Management</h2>
+                <p>Manage players in the game and learn about agricultural careers!</p>
+                
+                <div class="career-spotlight">
+                    <h4>💼 Career Spotlight: Precision Agriculture Specialist</h4>
+                    <p><strong>Education:</strong> Bachelor's in Agriculture + GIS certification</p>
+                    <p><strong>Salary:</strong> $65,000 - $85,000</p>
+                    <p><strong>Role:</strong> Uses NASA satellite data to optimize farm operations and reduce environmental impact</p>
+                </div>
+                
+                <div id="players-config">
+                    <!-- Player config will be added here -->
+                </div>
+
+                <div class="solutions-grid">
+                    <div class="solution-card" onclick="addPlayer()">
+                        <h3>➕ Add AI Player</h3>
+                        <p>Add a new AI player (max 4) - practice against different strategies</p>
+                    </div>
+                </div>
+
+                <button class="roll-btn" onclick="closeModal('players-modal')" style="margin-top: 20px; width: 100%">Close</button>
+            </div>
+        </div>
+
+        <!-- NASA Resources Modal -->
+        <div class="modal" id="resources-modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeModal('resources-modal')">×</button>
+                <h2>🛰️ NASA Agricultural Resources</h2>
+                
+                <div class="satellite-info">
+                    <h4>Explore Real NASA Data</h4>
+                    <p>Access the actual satellite data and educational resources used in this game:</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                        <a href="https://smap.jpl.nasa.gov/" target="_blank" class="satellite-link">SMAP Mission</a>
+                        <a href="https://modis.gsfc.nasa.gov/" target="_blank" class="satellite-link">MODIS</a>
+                        <a href="https://ecostress.jpl.nasa.gov/" target="_blank" class="satellite-link">ECOSTRESS</a>
+                        <a href="https://gracefo.jpl.nasa.gov/" target="_blank" class="satellite-link">GRACE-FO</a>
+                        <a href="https://nasaharvest.org/" target="_blank" class="satellite-link">NASA Harvest</a>
+                        <a href="https://giovanni.gsfc.nasa.gov/giovanni/" target="_blank" class="satellite-link">Giovanni</a>
+                        <a href="https://www.nasa.gov/mission/landsat-9/" target="_blank" class="satellite-link">Landsat 9</a>
+                        <a href="https://appliedsciences.nasa.gov/what-we-do/agriculture" target="_blank" class="satellite-link">NASA Ag Programs</a>
+                    </div>
+                </div>
+
+                <div class="science-fact">
+                    <h4>🎓 Educational Value</h4>
+                    <p>This game teaches real agricultural science concepts used by farmers worldwide:</p>
+                    <ul>
+                        <li>Soil moisture monitoring with satellite data</li>
+                        <li>Climate change impact on agriculture</li>
+                        <li>Sustainable farming practices</li>
+                        <li>Precision agriculture technologies</li>
+                    </ul>
+                </div>
+
+                <button class="roll-btn" onclick="closeModal('resources-modal')" style="margin-top: 20px; width: 100%">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== EDUCATIONAL DATABASES ====================
+
+        // Satellite Database with Educational Content
+        const satelliteDatabase = {
+            'SMAP': {
+                name: 'Soil Moisture Active Passive',
+                agency: 'NASA JPL',
+                purpose: 'Measures soil moisture and freeze/thaw state',
+                website: 'https://smap.jpl.nasa.gov/',
+                science: 'Uses microwave radiometry to measure water content in top 5cm of soil',
+                impact: 'Helps predict droughts 2-3 months in advance'
+            },
+            'MODIS': {
+                name: 'Moderate Resolution Imaging Spectroradiometer',
+                agency: 'NASA',
+                purpose: 'Comprehensive Earth observation across 36 spectral bands',
+                website: 'https://modis.gsfc.nasa.gov/',
+                science: 'Measures reflected light to calculate vegetation health indices',
+                impact: 'Monitors crop health across entire continents'
+            },
+            'ECOSTRESS': {
+                name: 'ECOsystem Spaceborne Thermal Radiometer Experiment',
+                agency: 'NASA JPL',
+                purpose: 'Measures plant temperatures and water use',
+                website: 'https://ecostress.jpl.nasa.gov/',
+                science: 'Detects plant water stress through leaf temperature measurements',
+                impact: 'Helps farmers optimize irrigation saving 20-30% water'
+            },
+            'GRACE-FO': {
+                name: 'Gravity Recovery and Climate Experiment Follow-On',
+                agency: 'NASA',
+                purpose: 'Measures changes in Earth\'s gravity field',
+                website: 'https://gracefo.jpl.nasa.gov/',
+                science: 'Tracks groundwater storage changes by measuring gravity variations',
+                impact: 'Monitors aquifer depletion and groundwater resources'
+            },
+            'Landsat': {
+                name: 'Landsat Program',
+                agency: 'NASA/USGS',
+                purpose: 'Longest-running Earth-observing satellite program',
+                website: 'https://www.nasa.gov/mission/landsat-9/',
+                science: 'Provides multispectral imagery for land cover and land use analysis',
+                impact: 'Tracks agricultural expansion, deforestation, and urban growth over decades'
+            }
+        };
+
+        // Agricultural Careers Database
+        const agriculturalCareers = [
+            {
+                title: "Precision Agriculture Specialist",
+                education: "Bachelor's in Agriculture + GIS certification",
+                salary: "$65,000 - $85,000",
+                description: "Uses NASA satellite data to optimize farm operations and reduce environmental impact",
+                skills: ["Satellite data analysis", "GIS software", "Crop science"]
+            },
+            {
+                title: "Agricultural Data Scientist",
+                education: "Master's in Data Science + Agriculture background",
+                salary: "$80,000 - $120,000",
+                description: "Analyzes satellite imagery to predict crop yields and detect diseases early",
+                skills: ["Python/R programming", "Machine learning", "Remote sensing"]
+            },
+            {
+                title: "Water Resource Manager",
+                education: "Bachelor's in Environmental Science or Hydrology",
+                salary: "$70,000 - $95,000",
+                description: "Uses NASA GRACE data to manage groundwater resources sustainably",
+                skills: ["Water cycle knowledge", "GIS mapping", "Policy understanding"]
+            },
+            {
+                title: "Sustainable Agriculture Consultant",
+                education: "Bachelor's in Agriculture or Environmental Science",
+                salary: "$60,000 - $90,000",
+                description: "Advises farmers on implementing sustainable practices using satellite data",
+                skills: ["Sustainability assessment", "Carbon farming", "Regenerative agriculture"]
+            }
+        ];
+
+        // Science Quiz Questions
+        const scienceQuizzes = [
+            {
+                question: "How much of Earth's water is freshwater available for agriculture?",
+                options: ["2.5%", "10%", "25%", "50%"],
+                answer: 0,
+                fact: "Only 2.5% of Earth's water is freshwater, and much of that is frozen in glaciers!",
+                reward: 500
+            },
+            {
+                question: "What does NASA's SMAP satellite primarily measure?",
+                options: ["Soil moisture", "Atmospheric temperature", "Ocean currents", "Solar radiation"],
+                answer: 0,
+                fact: "SMAP measures soil moisture in the top 5cm of soil, crucial for agriculture and drought prediction.",
+                reward: 300
+            },
+            {
+                question: "How can satellite data help farmers save water?",
+                options: [
+                    "By showing exactly where to irrigate",
+                    "By predicting rainfall accurately", 
+                    "By measuring plant water stress",
+                    "All of the above"
+                ],
+                answer: 3,
+                fact: "NASA satellites provide all these benefits, helping farmers reduce water usage by 20-30%!",
+                reward: 400
+            },
+            {
+                question: "What is precision agriculture?",
+                options: [
+                    "Farming with exact measurements and technology",
+                    "Growing only organic crops",
+                    "Using drones for all farm work",
+                    "A new type of fertilizer"
+                ],
+                answer: 0,
+                fact: "Precision agriculture uses GPS, sensors, and satellite data to optimize field-level management.",
+                reward: 350
+            },
+            {
+                question: "Which NASA satellite monitors plant water stress?",
+                options: ["SMAP", "ECOSTRESS", "GRACE-FO", "Landsat"],
+                answer: 1,
+                fact: "ECOSTRESS measures plant temperatures to detect water stress before visible signs appear.",
+                reward: 400
+            }
+        ];
+
+        // Problem Cards with Educational Content
+        const problemCards = [
+            {
+                title: "Regional Drought Warning",
+                description: "Critical soil moisture deficit detected in your agricultural region. Immediate action required to prevent crop loss.",
+                satellites: ['SMAP', 'GRACE-FO'],
+                science: "Soil moisture monitoring helps predict droughts months in advance, allowing farmers to implement water conservation measures.",
+                solutions: [
+                    {
+                        title: 'Implement Drip Irrigation',
+                        cost: 2000,
+                        effect: "Reduces water usage by 40% while maintaining crop yields",
+                        educational: "Drip irrigation delivers water directly to plant roots, minimizing evaporation"
+                    },
+                    {
+                        title: 'Plant Drought-Resistant Crops',
+                        cost: 1500,
+                        effect: "Maintains 80% yield with 50% less water",
+                        educational: "New crop varieties are bred for water efficiency and drought tolerance"
+                    },
+                    {
+                        title: 'Use NASA Soil Moisture Data',
+                        cost: 800,
+                        effect: "Optimize irrigation schedule, save 25% water",
+                        educational: "SMAP data helps farmers irrigate only when and where needed"
+                    }
+                ]
+            },
+            {
+                title: "Nutrient Deficiency Detected",
+                description: "Satellite imagery shows uneven nutrient distribution affecting crop health across your fields.",
+                satellites: ['Landsat', 'MODIS'],
+                science: "Multispectral imaging can detect nutrient stress before it's visible to the human eye.",
+                solutions: [
+                    {
+                        title: 'Precision Fertilizer Application',
+                        cost: 1800,
+                        effect: "Reduces fertilizer use by 30% while improving yields",
+                        educational: "Variable rate technology applies nutrients only where needed"
+                    },
+                    {
+                        title: 'Soil Amendment Program',
+                        cost: 1200,
+                        effect: "Improves long-term soil health and nutrient retention",
+                        educational: "Organic matter improves soil structure and nutrient holding capacity"
+                    },
+                    {
+                        title: 'Cover Cropping Strategy',
+                        cost: 1000,
+                        effect: "Natural nitrogen fixation, improves soil quality",
+                        educational: "Legume cover crops add nitrogen to soil naturally"
+                    }
+                ]
+            },
+            {
+                title: "Pest Infestation Alert",
+                description: "Early signs of pest damage detected in specific field areas through satellite monitoring.",
+                satellites: ['MODIS', 'Landsat'],
+                science: "Satellites can detect subtle changes in plant health that indicate pest presence before widespread damage.",
+                solutions: [
+                    {
+                        title: 'Targeted Pest Management',
+                        cost: 1600,
+                        effect: "Reduces pesticide use by 50% while controlling pests",
+                        educational: "IPM (Integrated Pest Management) uses multiple approaches for sustainable control"
+                    },
+                    {
+                        title: 'Beneficial Insect Habitat',
+                        cost: 1100,
+                        effect: "Natural pest control, improves biodiversity",
+                        educational: "Creating habitats for beneficial insects reduces need for chemical pesticides"
+                    },
+                    {
+                        title: 'Crop Rotation Plan',
+                        cost: 900,
+                        effect: "Breaks pest cycles, improves soil health",
+                        educational: "Rotating crops disrupts pest life cycles and reduces populations"
+                    }
+                ]
+            }
+        ];
+
+        // Opportunity Cards with Career Connections
+        const opportunityCards = [
+            {
+                title: "Carbon Farming Opportunity",
+                description: "New market emerging for carbon sequestration in agricultural soils. Your farm qualifies for carbon credits!",
+                science: "Agricultural soils can store significant amounts of carbon, helping mitigate climate change.",
+                career: agriculturalCareers[0],
+                actions: [
+                    {
+                        title: 'Implement Cover Cropping',
+                        cost: 1000,
+                        effect: "Earn carbon credits + improve soil health",
+                        educational: "Cover crops protect soil and sequester carbon between main crop seasons"
+                    },
+                    {
+                        title: 'Adopt No-Till Farming',
+                        cost: 2000,
+                        effect: "Higher carbon credits + reduced erosion",
+                        educational: "No-till practices minimize soil disturbance, preserving soil carbon"
+                    },
+                    {
+                        title: 'Plant Agroforestry Systems',
+                        cost: 2500,
+                        effect: "Maximum carbon sequestration + biodiversity",
+                        educational: "Integrating trees with crops creates diverse ecosystems that store more carbon"
+                    }
+                ]
+            },
+            {
+                title: "Precision Agriculture Grant",
+                description: "Government funding available for farms adopting satellite-based precision agriculture technologies.",
+                science: "Precision agriculture reduces environmental impact while improving productivity.",
+                career: agriculturalCareers[1],
+                actions: [
+                    {
+                        title: 'Soil Sensor Network',
+                        cost: 1500,
+                        effect: "Real-time soil monitoring, 20% yield increase",
+                        educational: "In-ground sensors provide detailed soil data to complement satellite information"
+                    },
+                    {
+                        title: 'Variable Rate Technology',
+                        cost: 3000,
+                        effect: "Optimized input use, higher profitability",
+                        educational: "VRT equipment applies inputs at variable rates across fields based on need"
+                    },
+                    {
+                        title: 'Drone Imaging System',
+                        cost: 2200,
+                        effect: "High-resolution crop monitoring, early problem detection",
+                        educational: "Drones provide detailed imagery between satellite passes"
+                    }
+                ]
+            }
+        ];
+
+        // Region Educational Content
+        const regionEducation = {
+            'mixed': {
+                title: "Mixed Crop Farming",
+                science: "Crop diversity improves soil health and reduces pest pressure through natural ecosystem balance.",
+                nasa: "Satellites monitor crop health across different varieties to optimize planting strategies."
+            },
+            'wine': {
+                title: "Viticulture (Wine Grape Farming)",
+                science: "Grapevines are particularly sensitive to soil moisture and temperature variations.",
+                nasa: "Thermal satellites help vintners monitor vine stress and optimize harvest timing."
+            },
+            'livestock': {
+                title: "Livestock Management",
+                science: "Sustainable livestock farming integrates animal and crop production for better resource use.",
+                nasa: "Satellite data helps optimize pasture rotation and monitor forage quality."
+            },
+            'organic': {
+                title: "Organic Agriculture",
+                science: "Organic farming emphasizes soil health and biodiversity without synthetic inputs.",
+                nasa: "Remote sensing helps organic farmers monitor soil health and pest pressures naturally."
+            },
+            'rice': {
+                title: "Rice Paddy Agriculture",
+                science: "Rice paddies are significant methane emitters but also important wetland ecosystems.",
+                nasa: "Satellites monitor water management in rice fields to reduce greenhouse gas emissions."
+            }
+        };
+
+        // Asset Shop Items
+        const assetShop = [
+            { 
+                name: 'Smart Irrigation System', 
+                cost: 5000, 
+                effect: { passiveIncome: 300, sustainability: 1 },
+                description: "Automated watering based on soil moisture data"
+            },
+            { 
+                name: 'Precision Agriculture Tech', 
+                cost: 3000, 
+                effect: { passiveIncome: 200, sustainability: 1 },
+                description: "GPS-guided equipment for efficient farming"
+            },
+            { 
+                name: 'Sustainable IPM System', 
+                cost: 4000, 
+                effect: { passiveIncome: 200, sustainability: 2 },
+                description: "Integrated pest management reduces chemical use"
+            },
+            { 
+                name: 'Soil Health Monitor', 
+                cost: 2500, 
+                effect: { passiveIncome: 150, sustainability: 1 },
+                description: "Real-time soil nutrient and moisture tracking"
+            },
+            { 
+                name: 'Solar Water Pump', 
+                cost: 3500, 
+                effect: { passiveIncome: 180, sustainability: 2 },
+                description: "Renewable energy for irrigation needs"
+            },
+            { 
+                name: 'Weather Station', 
+                cost: 2800, 
+                effect: { passiveIncome: 120, sustainability: 1 },
+                description: "Local weather data for better decision making"
+            }
+        ];
+
+        // ==================== GAME STATE ====================
+
+        const gameState = {
+            currentPlayer: 0,
+            players: [
+                {
+                    position: 0,
+                    cash: 10000,
+                    passiveIncome: 500,
+                    expenses: 3000,
+                    soilMoisture: 'Optimal',
+                    sustainability: 5,
+                    nasaUsage: 2,
+                    assets: ['Basic Equipment'],
+                    color: '#ff5722',
+                    isAI: false,
+                    active: true
+                },
+                {
+                    position: 0,
+                    cash: 10000,
+                    passiveIncome: 500,
+                    expenses: 3000,
+                    soilMoisture: 'Optimal',
+                    sustainability: 5,
+                    nasaUsage: 2,
+                    assets: ['Basic Equipment'],
+                    color: '#2196f3',
+                    isAI: true,
+                    active: true
+                }
+            ],
+            diceValue: 1,
+            currentRegion: 'mixed',
+            currentClimate: 'stable',
+            isRolling: false,
+            rollInterval: null,
+            gameBoard: []
+        };
+
+        // ==================== GAME INITIALIZATION ====================
+
+        function initGame() {
+            createGameBoard();
+            updateDashboard();
+            renderAssetShop();
+            updatePlayersConfig();
+            updateAllTokenPositions();
+            
+            gameState.isRolling = false;
+            gameState.rollInterval = null;
+            
+            addLogEntry("Game started! Player 1's turn.", "neutral");
+            addLogEntry("💡 Click on board spaces to learn about agricultural science!", "educational");
+        }
+
+        function createGameBoard() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = '';
+            gameState.gameBoard = [];
+            
+            const boardSize = 11;
+            const totalCells = boardSize * boardSize;
+            const cellTypes = ['problem', 'opportunity', 'asset', 'nasa-data', 'market', 'quiz'];
+            
+            for (let i = 0; i < totalCells; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'board-cell';
+                
+                if (i === 0) {
+                    cell.classList.add('corner-cell');
+                    cell.textContent = 'START';
+                    gameState.gameBoard.push({type: 'start', index: i});
+                } else if (i === boardSize-1 || i === totalCells-1 || i === totalCells-boardSize) {
+                    cell.classList.add('corner-cell');
+                    cell.textContent = 'NASA';
+                    cell.classList.add('cell-nasa');
+                    gameState.gameBoard.push({type: 'nasa', index: i});
+                } else {
+                    const cellType = cellTypes[Math.floor(Math.random() * cellTypes.length)];
+                    let displayText = '';
+                    
+                    switch(cellType) {
+                        case 'problem':
+                            displayText = 'PROBLEM';
+                            cell.classList.add('cell-problem');
+                            break;
+                        case 'opportunity':
+                            displayText = 'OPPORTUNITY';
+                            cell.classList.add('cell-opportunity');
+                            break;
+                        case 'asset':
+                            displayText = 'ASSET';
+                            cell.classList.add('cell-asset');
+                            break;
+                        case 'nasa-data':
+                            displayText = 'NASA';
+                            cell.classList.add('cell-nasa');
+                            break;
+                        case 'market':
+                            displayText = 'MARKET';
+                            cell.classList.add('cell-market');
+                            break;
+                        case 'quiz':
+                            displayText = 'QUIZ';
+                            cell.classList.add('cell-quiz');
+                            break;
+                    }
+                    
+                    cell.textContent = displayText;
+                    gameState.gameBoard.push({type: cellType, index: i});
+                }
+                
+                cell.addEventListener('click', () => {
+                    showEducationalContent(cell.textContent);
+                });
+                
+                gameBoard.appendChild(cell);
+            }
+        }
+
+        function updateAllTokenPositions() {
+            const boardSize = 11;
+            const gameBoard = document.getElementById('game-board');
+            const boardRect = gameBoard.getBoundingClientRect();
+            const cellSize = boardRect.width / boardSize;
+            
+            gameState.players.forEach((player, index) => {
+                const token = document.getElementById(`player-${index + 1}-token`);
+                if (!token || !player.active) {
+                    if (token) token.style.display = 'none';
+                    return;
+                }
+                
+                const position = player.position;
+                const row = Math.floor(position / boardSize);
+                const col = position % boardSize;
+                
+                const left = col * cellSize + (cellSize / 2) - 14;
+                const top = row * cellSize + (cellSize / 2) - 14;
+                
+                token.style.left = `${left}px`;
+                token.style.top = `${top}px`;
+                token.style.display = 'flex';
+            });
+        }
+
+        // ==================== DICE AND MOVEMENT ====================
+
+        function rollDice() {
+            if (gameState.isRolling) return;
+            
+            const diceElement = document.getElementById('dice');
+            const rollBtn = document.getElementById('roll-btn');
+            
+            gameState.isRolling = true;
+            rollBtn.disabled = true;
+            rollBtn.textContent = 'Rolling...';
+            diceElement.classList.add('rolling');
+            
+            let rolls = 0;
+            const maxRolls = 15;
+            
+            if (gameState.rollInterval) {
+                clearInterval(gameState.rollInterval);
+            }
+            
+            gameState.rollInterval = setInterval(() => {
+                gameState.diceValue = Math.floor(Math.random() * 6) + 1;
+                diceElement.textContent = gameState.diceValue;
+                rolls++;
+                
+                if (rolls >= maxRolls) {
+                    clearInterval(gameState.rollInterval);
+                    gameState.rollInterval = null;
+                    diceElement.classList.remove('rolling');
+                    
+                    setTimeout(() => {
+                        movePlayer(gameState.diceValue);
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        function movePlayer(steps) {
+            const player = gameState.players[gameState.currentPlayer];
+            const totalCells = 121;
+            
+            player.position = (player.position + steps) % totalCells;
+            
+            updateAllTokenPositions();
+            addLogEntry(`Player ${gameState.currentPlayer + 1} moved ${steps} spaces.`, "neutral");
+            
+            setTimeout(() => {
+                processCellLanding();
+            }, 800);
+        }
+
+        function processCellLanding() {
+            const player = gameState.players[gameState.currentPlayer];
+            const cellIndex = player.position;
+            const cellType = gameState.gameBoard[cellIndex].type;
+            
+            addLogEntry(`Landed on: ${cellType.toUpperCase()} space`, "neutral");
+            
+            // Random chance for quiz on any space
+            const randomEvent = Math.random();
+            if (randomEvent < 0.1) {
+                showScienceQuiz();
+                return;
+            }
+            
+            switch(cellType) {
+                case 'problem':
+                    showProblemModal();
+                    break;
+                case 'opportunity':
+                    showOpportunityModal();
+                    break;
+                case 'quiz':
+                    showScienceQuiz();
+                    break;
+                default:
+                    // For other spaces, give small reward and continue
+                    const reward = 200;
+                    player.cash += reward;
+                    addLogEntry(`Found opportunity! +$${reward}`, "positive");
+                    updateDashboard();
+                    endTurn();
+            }
+        }
+
+        // ==================== MODAL SYSTEMS WITH SKIP OPTIONS ====================
+
+        function showProblemModal() {
+            const problem = problemCards[Math.floor(Math.random() * problemCards.length)];
+            
+            document.getElementById('problem-title').textContent = `🚨 ${problem.title}`;
+            document.getElementById('problem-description').textContent = problem.description;
+            
+            // Satellite information
+            document.getElementById('satellite-info').innerHTML = `
+                <h4>🛰️ NASA Satellite Detection</h4>
+                <p><strong>Satellites Used:</strong> ${problem.satellites.join(', ')}</p>
+                ${problem.satellites.map(sat => `
+                    <div style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                        <strong>${satelliteDatabase[sat].name}</strong><br>
+                        <em>${satelliteDatabase[sat].purpose}</em><br>
+                        <div style="margin-top: 5px; font-size: 0.85rem;">${satelliteDatabase[sat].science}</div>
+                        <a href="${satelliteDatabase[sat].website}" target="_blank" class="satellite-link">Learn More</a>
+                    </div>
+                `).join('')}
+            `;
+            
+            document.getElementById('problem-science').innerHTML = `
+                <h4>🔬 Agricultural Science</h4>
+                <p>${problem.science}</p>
+            `;
+            
+            const solutionsContainer = document.getElementById('solutions-container');
+            solutionsContainer.innerHTML = '';
+            
+            problem.solutions.forEach((solution) => {
+                const player = gameState.players[gameState.currentPlayer];
+                const canAfford = player.cash >= solution.cost;
+                
+                const solutionElement = document.createElement('div');
+                solutionElement.className = 'solution-card';
+                solutionElement.style.opacity = canAfford ? '1' : '0.6';
+                solutionElement.innerHTML = `
+                    <h3>${solution.title}</h3>
+                    <p>${solution.effect}</p>
+                    <div class="solution-cost">Cost: $${solution.cost}</div>
+                    <div style="font-size: 0.85rem; color: #ffcc80; margin-top: 8px;">
+                        <strong>Educational:</strong> ${solution.educational}
+                    </div>
+                    ${!canAfford ? '<div style="color: #ff5722; margin-top: 5px;">Cannot afford this solution</div>' : ''}
+                `;
+                
+                if (canAfford) {
+                    solutionElement.addEventListener('click', () => {
+                        player.cash -= solution.cost;
+                        player.sustainability += 1;
+                        addLogEntry(`Implemented ${solution.title}`, "positive");
+                        addLogEntry(`🎓 ${solution.educational}`, "educational");
+                        updateDashboard();
+                        closeModal('problem-modal');
+                        endTurn();
+                    });
+                }
+                
+                solutionsContainer.appendChild(solutionElement);
+            });
+            
+            showModal('problem-modal');
+        }
+
+        function skipProblem() {
+            addLogEntry("Skipped agricultural challenge", "neutral");
+            closeModal('problem-modal');
+            endTurn();
+        }
+
+        function showOpportunityModal() {
+            const opportunity = opportunityCards[Math.floor(Math.random() * opportunityCards.length)];
+            
+            document.getElementById('opportunity-description').textContent = opportunity.description;
+            
+            // Science fact
+            document.getElementById('opportunity-satellite').innerHTML = `
+                <h4>🔬 Agricultural Science</h4>
+                <p>${opportunity.science}</p>
+            `;
+            
+            // Career information
+            document.getElementById('opportunity-career').innerHTML = `
+                <h4>💼 Career Spotlight: ${opportunity.career.title}</h4>
+                <p><strong>Education:</strong> ${opportunity.career.education}</p>
+                <p><strong>Salary:</strong> ${opportunity.career.salary}</p>
+                <p><strong>Role:</strong> ${opportunity.career.description}</p>
+                <p><strong>Skills:</strong> ${opportunity.career.skills.join(', ')}</p>
+            `;
+            
+            const actionsContainer = document.getElementById('opportunity-actions');
+            actionsContainer.innerHTML = '';
+            
+            opportunity.actions.forEach((action) => {
+                const player = gameState.players[gameState.currentPlayer];
+                const canAfford = player.cash >= action.cost;
+                
+                const actionElement = document.createElement('div');
+                actionElement.className = 'solution-card';
+                actionElement.style.opacity = canAfford ? '1' : '0.6';
+                actionElement.innerHTML = `
+                    <h3>${action.title}</h3>
+                    <p>${action.effect}</p>
+                    <div class="solution-cost">Cost: $${action.cost}</div>
+                    <div style="font-size: 0.85rem; color: #ffcc80; margin-top: 8px;">
+                        <strong>Educational:</strong> ${action.educational}
+                    </div>
+                    ${!canAfford ? '<div style="color: #ff5722; margin-top: 5px;">Cannot afford this investment</div>' : ''}
+                `;
+                
+                if (canAfford) {
+                    actionElement.addEventListener('click', () => {
+                        player.cash -= action.cost;
+                        player.passiveIncome += 100;
+                        player.sustainability += 1;
+                        addLogEntry(`Invested in ${action.title}`, "positive");
+                        addLogEntry(`🎓 ${action.educational}`, "educational");
+                        updateDashboard();
+                        closeModal('opportunity-modal');
+                        endTurn();
+                    });
+                }
+                
+                actionsContainer.appendChild(actionElement);
+            });
+            
+            showModal('opportunity-modal');
+        }
+
+        function skipOpportunity() {
+            addLogEntry("Skipped investment opportunity", "neutral");
+            closeModal('opportunity-modal');
+            endTurn();
+        }
+
+        function showScienceQuiz() {
+            const quiz = scienceQuizzes[Math.floor(Math.random() * scienceQuizzes.length)];
+            const container = document.getElementById('quiz-container');
+            const continueBtn = document.getElementById('quiz-continue');
+            const skipBtn = document.getElementById('quiz-skip');
+            
+            container.innerHTML = `
+                <h3>${quiz.question}</h3>
+                ${quiz.options.map((option, index) => `
+                    <div class="quiz-option" data-index="${index}">${option}</div>
+                `).join('')}
+                <div id="quiz-feedback" style="margin-top: 15px; display: none;"></div>
+            `;
+            
+            container.querySelectorAll('.quiz-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedIndex = parseInt(this.getAttribute('data-index'));
+                    const feedback = document.getElementById('quiz-feedback');
+                    
+                    // Disable skip button once answered
+                    skipBtn.style.display = 'none';
+                    
+                    if (selectedIndex === quiz.answer) {
+                        this.classList.add('correct');
+                        feedback.innerHTML = `
+                            <div class="positive">✅ Correct! ${quiz.fact}</div>
+                            <div class="positive" style="margin-top: 10px;">Educational Reward: $${quiz.reward}!</div>
+                        `;
+                        feedback.style.display = 'block';
+                        
+                        const player = gameState.players[gameState.currentPlayer];
+                        player.cash += quiz.reward;
+                        updateDashboard();
+                    } else {
+                        this.classList.add('incorrect');
+                        container.querySelector(`.quiz-option[data-index="${quiz.answer}"]`).classList.add('correct');
+                        feedback.innerHTML = `
+                            <div class="negative">❌ Not quite right. ${quiz.fact}</div>
+                        `;
+                        feedback.style.display = 'block';
+                    }
+                    
+                    container.querySelectorAll('.quiz-option').forEach(opt => {
+                        opt.style.pointerEvents = 'none';
+                    });
+                    
+                    continueBtn.style.display = 'block';
+                });
+            });
+            
+            continueBtn.style.display = 'none';
+            skipBtn.style.display = 'block';
+            continueBtn.onclick = () => {
+                closeModal('quiz-modal');
+                endTurn();
+            };
+            
+            showModal('quiz-modal');
+        }
+
+        function skipQuiz() {
+            addLogEntry("Skipped science quiz", "neutral");
+            closeModal('quiz-modal');
+            endTurn();
+        }
+
+        function showEducationalContent(cellType) {
+            const facts = {
+                'PROBLEM': '🌱 Agricultural challenges teach real problem-solving skills!',
+                'OPPORTUNITY': '🚀 Innovation opportunities show how technology transforms agriculture!',
+                'NASA': '🛰️ NASA data helps farmers make informed decisions!',
+                'ASSET': '💼 Agricultural assets improve farming efficiency and sustainability!',
+                'MARKET': '📈 Understanding market forces is crucial for agricultural business!',
+                'QUIZ': '🧠 Test your knowledge of agricultural science and NASA technology!'
+            };
+            
+            if (facts[cellType]) {
+                addLogEntry(`Educational: ${facts[cellType]}`, "educational");
+            }
+        }
+
+        // ==================== GAME FLOW ====================
+
+        function endTurn() {
+            gameState.isRolling = false;
+            
+            const rollBtn = document.getElementById('roll-btn');
+            rollBtn.disabled = false;
+            rollBtn.textContent = 'Roll Dice';
+            
+            const player = gameState.players[gameState.currentPlayer];
+            player.cash += player.passiveIncome;
+            player.cash -= player.expenses;
+            
+            gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+            updateDashboard();
+            
+            const currentPlayer = gameState.players[gameState.currentPlayer];
+            addLogEntry(`Player ${gameState.currentPlayer + 1}'s turn. Cash: $${currentPlayer.cash}`, "neutral");
+            
+            if (currentPlayer.isAI && currentPlayer.active) {
+                setTimeout(() => {
+                    if (!gameState.isRolling) {
+                        rollDice();
+                    }
+                }, 1500);
+            }
+        }
+
+        // ==================== ASSET SHOP ====================
+
+        function renderAssetShop() {
+            const container = document.getElementById('assets-container');
+            container.innerHTML = '';
+            
+            assetShop.forEach(asset => {
+                const player = gameState.players[gameState.currentPlayer];
+                const owned = player.assets.includes(asset.name);
+                const canAfford = player.cash >= asset.cost;
+                
+                const item = document.createElement('div');
+                item.className = 'asset-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>${asset.name}</strong>
+                        <div style="font-size: 0.8rem; margin: 5px 0;">${asset.description}</div>
+                        <div>Cost: $${asset.cost}</div>
+                        <div style="font-size: 0.75rem; color: #c8e6c9;">
+                            +$${asset.effect.passiveIncome}/month income
+                            ${asset.effect.sustainability ? `, +${asset.effect.sustainability} sustainability` : ''}
+                        </div>
+                    </div>
+                    <button class="buy-btn" ${owned || !canAfford ? 'disabled' : ''} 
+                            onclick="buyAsset('${asset.name}', ${asset.cost}, ${asset.effect.passiveIncome}, ${asset.effect.sustainability || 0})">
+                        ${owned ? 'Owned' : 'Buy'}
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function buyAsset(name, cost, income, sustainability) {
+            const player = gameState.players[gameState.currentPlayer];
+            
+            player.cash -= cost;
+            player.assets.push(name);
+            player.passiveIncome += income;
+            player.sustainability += sustainability;
+            
+            addLogEntry(`Purchased ${name} for $${cost}`, "positive");
+            addLogEntry("🎓 Investing in agricultural technology improves efficiency and sustainability!", "educational");
+            updateDashboard();
+            renderAssetShop();
+        }
+
+        // ==================== DASHBOARD AND UI UPDATES ====================
+
+        function updateDashboard() {
+            const player = gameState.players[gameState.currentPlayer];
+            
+            document.getElementById('cash').textContent = `$${player.cash}`;
+            document.getElementById('passive-income').textContent = `$${player.passiveIncome}`;
+            document.getElementById('expenses').textContent = `$${player.expenses}`;
+            document.getElementById('soil-moisture').textContent = player.soilMoisture;
+            document.getElementById('sustainability').textContent = `${player.sustainability}/10`;
+            document.getElementById('nasa-usage').textContent = `${player.nasaUsage}/5`;
+            
+            document.getElementById('turn-indicator').textContent = 
+                `Player ${gameState.currentPlayer + 1}'s Turn - Position: ${player.position}`;
+                
+            // Update button states
+            const rollBtn = document.getElementById('roll-btn');
+            if (player.isAI) {
+                rollBtn.disabled = true;
+                rollBtn.textContent = 'AI Thinking...';
+            } else {
+                rollBtn.disabled = gameState.isRolling;
+                rollBtn.textContent = gameState.isRolling ? 'Rolling...' : 'Roll Dice';
+            }
+        }
+
+        function addLogEntry(message, type) {
+            const log = document.getElementById('game-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = message;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // ==================== MODAL MANAGEMENT ====================
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // ==================== REGION AND CLIMATE ====================
+
+        function selectRegion(region) {
+            gameState.currentRegion = region;
+            
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const regionNames = {
+                'mixed': 'Mixed Crop',
+                'wine': 'Wine Farm', 
+                'livestock': 'Livestock',
+                'organic': 'Organic',
+                'rice': 'Rice Paddy'
+            };
+            
+            document.getElementById('region-status').textContent = regionNames[region];
+            
+            // Update educational content
+            const education = regionEducation[region];
+            document.getElementById('region-education').innerHTML = `
+                <h4>🌾 ${education.title} Education</h4>
+                <p><strong>Science:</strong> ${education.science}</p>
+                <p><strong>NASA Connection:</strong> ${education.nasa}</p>
+            `;
+            
+            addLogEntry(`Selected region: ${regionNames[region]}`, "positive");
+            addLogEntry(`🎓 ${education.science}`, "educational");
+            closeModal('region-modal');
+        }
+
+        function selectClimate(climate) {
+            gameState.currentClimate = climate;
+            
+            const climateNames = {
+                'stable': 'Stable',
+                'drought': 'Extreme Drought',
+                'flooding': 'Increased Flooding',
+                'heatwave': 'Heat Waves'
+            };
+            
+            document.getElementById('climate-status').textContent = climateNames[climate];
+            addLogEntry(`Climate changed to: ${climateNames[climate]}`, "neutral");
+            
+            // Add educational message
+            const climateMessages = {
+                'stable': "Studying traditional farming methods in stable conditions",
+                'drought': "Learning about water conservation and drought-resistant crops",
+                'flooding': "Exploring flood management and resilient agriculture",
+                'heatwave': "Understanding heat stress management in crops"
+            };
+            addLogEntry(`🎓 ${climateMessages[climate]}`, "educational");
+            
+            closeModal('climate-modal');
+        }
+
+        // ==================== PLAYER MANAGEMENT ====================
+
+        function updatePlayersConfig() {
+            const config = document.getElementById('players-config');
+            config.innerHTML = '';
+            
+            gameState.players.forEach((player, index) => {
+                const item = document.createElement('div');
+                item.className = 'player-config-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>Player ${index + 1}</strong>
+                        <div>${player.isAI ? '🤖 AI' : '👤 Human'} - $${player.cash}</div>
+                    </div>
+                    <button class="player-toggle" onclick="togglePlayer(${index})" style="background: ${player.active ? '#f44336' : '#4caf50'}">
+                        ${player.active ? 'Remove' : 'Add'}
+                    </button>
+                `;
+                config.appendChild(item);
+            });
+        }
+
+        function togglePlayer(index) {
+            // Don't allow removing player 1 (human)
+            if (index === 0) return;
+            
+            gameState.players[index].active = !gameState.players[index].active;
+            updatePlayersConfig();
+            updateAllTokenPositions();
+            
+            if (gameState.currentPlayer === index && !gameState.players[index].active) {
+                // If current player was removed, move to next player
+                endTurn();
+            }
+            
+            addLogEntry(`Player ${index + 1} ${gameState.players[index].active ? 'added' : 'removed'}`, "neutral");
+        }
+
+        function addPlayer() {
+            if (gameState.players.length >= 4) {
+                addLogEntry("Maximum 4 players reached!", "negative");
+                return;
+            }
+            
+            const colors = ['#9c27b0', '#ffeb3b'];
+            const newPlayer = {
+                position: 0,
+                cash: 10000,
+                passiveIncome: 500,
+                expenses: 3000,
+                soilMoisture: 'Optimal',
+                sustainability: 5,
+                nasaUsage: 2,
+                assets: ['Basic Equipment'],
+                color: colors[gameState.players.length - 2],
+                isAI: true,
+                active: true
+            };
+            
+            gameState.players.push(newPlayer);
+            updatePlayersConfig();
+            updateAllTokenPositions();
+            addLogEntry(`Added AI Player ${gameState.players.length}`, "positive");
+            addLogEntry("🎓 AI players simulate different farming strategies and decision-making approaches!", "educational");
+        }
+
+        // ==================== GAME CONTROLS ====================
+
+        function resetGame() {
+            // Clear any active intervals
+            if (gameState.rollInterval) {
+                clearInterval(gameState.rollInterval);
+                gameState.rollInterval = null;
+            }
+            
+            // Reset game state
+            gameState.currentPlayer = 0;
+            gameState.isRolling = false;
+            
+            // Reset players
+            gameState.players.forEach((player, index) => {
+                player.position = 0;
+                player.cash = 10000;
+                player.passiveIncome = 500;
+                player.expenses = 3000;
+                player.soilMoisture = 'Optimal';
+                player.sustainability = 5;
+                player.nasaUsage = 2;
+                player.assets = ['Basic Equipment'];
+                player.active = index < 2; // First two players active by default
+            });
+            
+            // Reinitialize game
+            initGame();
+            addLogEntry("Game has been reset!", "neutral");
+        }
+
+        // ==================== INITIALIZATION ====================
+
+        window.onload = initGame;
+        window.addEventListener('resize', updateAllTokenPositions);
+
+        // Close modals when clicking outside content
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
